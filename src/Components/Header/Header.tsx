@@ -3,14 +3,18 @@ import './Header.css'
 import AuthHandler from '../Login/AuthHandler'
 import MyPageModal from '../Mypage/Mypage'
 // import { KAKAO_SDK_ID } from '../../store/slices/constant'
-
+import { UserData } from '../../api'
 declare global {
   interface Window {
     Kakao: any
   }
 }
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  userData: UserData | null
+}
+
+const Header: React.FC<HeaderProps> = ({ userData }) => {
   // const [isAuthTokenPresent, setIsAuthTokenPresent] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalIndex, setModalIndex] = useState(0)
@@ -101,10 +105,13 @@ const Header: React.FC = () => {
         </div>
       </div>
       <div className="Header-right">
+        <div className="Header-intro">
+          {userData ? `${userData.name}님 반가워요!` : '게스트님 반가워요!'}
+        </div>
         <div className="Header-intro" onClick={IntroLink}>
           티끌 소개
         </div>
-        <div className="Header-mypage" onClick={() => openModal(1)}>
+        <div className="Header-mypage" onClick={() => openModal(0)}>
           마이페이지
         </div>
         {/* <div className="Header-intro" onClick={shareToKakao}>

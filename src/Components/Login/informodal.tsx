@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Modal from '../modal/modal'
 import { motion } from 'framer-motion'
 import './Login.css'
+import * as Sentry from '@sentry/react';
 import {
   postUserData,
   getNoticeDepartment,
@@ -77,13 +78,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
           const schoolOptions: string[] = await getNoticeSite()
           setSchools(schoolOptions)
         } catch (error) {
+          Sentry.captureException(error);
           console.error('Error fetching schools:', error)
           // toast.error('학교 정보를 불러오는데 실패했습니다.')
         }
         try {
           const tagsData = await getSaraminTags()
           setTags(tagsData)
-        } catch (error) {
+        } catch (error) { 
+          Sentry.captureException(error);
           console.error('Error fetching Saramin tags:', error)
           // toast.error('채용 분야 정보를 불러오는데 실패했습니다.')
         }
@@ -134,6 +137,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
           const departmentOptions2: string[] = await getNoticeDepartment2(school)
           setDepartments2(departmentOptions2)
         } catch (error) {
+          Sentry.captureException(error);
           console.error('Error fetching departments:', error)
           // toast.error('관심 학과 정보를 불러오는데 실패했습니다.')
         }
@@ -272,6 +276,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
         window.location.reload()
       }, 1000) // 1초 후 새로고침
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Error posting user data:', error)
       toast.error('사용자 정보 제출에 실패했습니다. 다시 시도해주세요.')
     }

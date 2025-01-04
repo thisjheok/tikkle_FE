@@ -1,9 +1,15 @@
 import React from 'react'
+import './Loading.css'
 
-const Loading: React.FC = () => {
+interface LoadingProps {
+  type?: 'mypage' | 'main';
+}
+
+const Loading: React.FC<LoadingProps> = ({ type = 'main' }) => {
   return (
-    <div>
-      <p>로딩 중입니다. 잠시만 기다려주세요...</p>
+    <div className={`loading-wrapper ${type === 'mypage' ? 'loading-mypage' : ''}`}>
+      <div className='loading-logo'><img src = '/img/Logo/Logo241229.svg' alt='logo'></img></div>
+      <div className="spinner"></div>
     </div>
   )
 }

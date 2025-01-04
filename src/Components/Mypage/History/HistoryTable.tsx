@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './History.css';
 import { getBookmarkedNotices, BookmarkedNotice,toggleBookmark } from '../../../api';
 import { getBookmarkedSaramin, BookmarkedSaramin,toggleBookmark2 } from '../../../api';
-
+import * as Sentry from '@sentry/react';
 
 interface Item {
   분야: string
@@ -81,6 +81,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ activeTab,refreshBookmarkSt
       setAllData(result)
       setTotalPages(Math.ceil(result.length / clientItemsPerPage))
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Error fetching data:', error)
       setAllData([])
       setTotalPages(1)
@@ -182,6 +183,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({ activeTab,refreshBookmarkSt
       // 북마크 통계 새로고침
       await refreshBookmarkStats();
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Error deleting items and toggling bookmarks:', error)
     }
   }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { gapi, loadAuth2 } from 'gapi-script'
+import { gapi} from 'gapi-script'
 import './calendar.css'
 import { GOOGLE_API_KEY, GOOGLE_ID } from '../../store/slices/constant'
-
+import * as Sentry from '@sentry/react';
 const CLIENT_ID = GOOGLE_ID
 const API_KEY = GOOGLE_API_KEY
 const DISCOVERY_DOCS = [
@@ -53,21 +53,21 @@ const Calendar: React.FC<{
     })
   }
 
-  const handleAuthClick = async () => {
-    try {
-      const auth2 = await loadAuth2(gapi, CLIENT_ID, SCOPES)
-      if (auth2.isSignedIn.get()) {
-        setIsSignedIn(true)
-        getEvents()
-      } else {
-        await auth2.signIn()
-        setIsSignedIn(true)
-        getEvents()
-      }
-    } catch (err) {
-      console.error('Error signing in:', err)
-    }
-  }
+  // const handleAuthClick = async () => {
+  //   try {
+  //     const auth2 = await loadAuth2(gapi, CLIENT_ID, SCOPES)
+  //     if (auth2.isSignedIn.get()) {
+  //       setIsSignedIn(true)
+  //       getEvents()
+  //     } else {
+  //       await auth2.signIn()
+  //       setIsSignedIn(true)
+  //       getEvents()
+  //     }
+  //   } catch (err) {
+  //     console.error('Error signing in:', err)
+  //   }
+  // }
 
   const getEvents = async () => {
     try {
@@ -89,6 +89,7 @@ const Calendar: React.FC<{
       })
       setEvents(response.result.items)
     } catch (err) {
+      Sentry.captureException(err);
       console.error('Error fetching events:', err)
     }
   }
@@ -105,6 +106,7 @@ const Calendar: React.FC<{
         gapi.auth2.getAuthInstance().isSignedIn.listen(setIsSignedIn)
         setIsSignedIn(gapi.auth2.getAuthInstance().isSignedIn.get())
       } catch (err) {
+        Sentry.captureException(err);
         console.error('Error initializing Google API client:', err)
       }
     }
@@ -133,11 +135,11 @@ const Calendar: React.FC<{
 
   return (
     <div className="Calendar-Container">
-      {!isSignedIn && (
+      {/* {!isSignedIn && (
         <button className="Calendar-button" onClick={handleAuthClick}>
           구글 캘린더 연동
         </button>
-      )}
+      )} */}
       <div className="month-header">
         <button onClick={() => changeMonth(-1)} className="prev-button">
           &lt;
@@ -151,8 +153,11 @@ const Calendar: React.FC<{
         </button>
       </div>
       <div className="week-days">
-        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-          <div key={day} className="week-day">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+          <div 
+            key={day} 
+            className={`week-day ${index === 0 ? 'sunday' : ''} ${index === 6 ? 'saturday' : ''}`}
+          >
             {day}
           </div>
         ))}

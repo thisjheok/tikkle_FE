@@ -101,16 +101,19 @@ const AuthHandler: React.FC = () => {
   }
 
   const handleKakaoLogin = () => {
+    localStorage.setItem('last_login_type', 'kakao')
     dispatch(kakaoLogin())
     closeModal()
   }
 
   const handleNaverLogin = () => {
+    localStorage.setItem('last_login_type', 'naver')
     dispatch(naverLogin())
     closeModal()
   }
 
   const handleGoogleLogin = () => {
+    localStorage.setItem('last_login_type', 'google')
     dispatch(googleLogin())
     closeModal()
   }

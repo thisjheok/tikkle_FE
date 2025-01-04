@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios'
 import GoogleAuthBody from './store/slices/authslice'
 import qs from 'qs'
 import { Recruitment } from './store/Rec'
-
+import * as Sentry from '@sentry/react';
 const BASE_URL = 'https://api.tikkeul.site'
 
 const axiosInstance = axios.create({
@@ -53,6 +53,7 @@ axiosInstance.interceptors.request.use(
     return config
   },
   error => {
+    Sentry.captureException(error);
     return Promise.reject(error)
   }
 )
@@ -60,8 +61,8 @@ axiosInstance.interceptors.request.use(
 let isRefreshing = false; // refresh를 모든 곳에서 동시에 진행하지 못하도록 막음
 let refreshSubscribers: ((token: string) => void)[] = []; // refresh가 막혀있을 때 해당 부분으로 들어감
 
-const onRefreshed = () => { // refresh가 완료되었을 때 실행됨
-  refreshSubscribers.forEach(callback => callback);
+const onRefreshed = (token: string) => { // refresh가 완료되었을 때 실행됨
+  refreshSubscribers.forEach(callback => callback(token));
   refreshSubscribers = [];
 };
 
@@ -108,11 +109,12 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
 
         isRefreshing = false; // Refresh 진행 완료
-        onRefreshed() // 진행하지 못한 함수를 다시 진행
+        onRefreshed(newAccessToken) // 진행하지 못한 함수를 다시 진행
 
         // 원래 요청 재시도
         return axiosInstance(originalRequest)
       } catch (refreshError) {
+        Sentry.captureException(refreshError);
         console.error('토큰 갱신 오류:', refreshError)
         // 토큰 갱신 실패 시 추가 처리 (예: 사용자 로그아웃)
         localStorage.removeItem("access_token");
@@ -121,7 +123,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError)
       }
     }
-
+    Sentry.captureException(error);
     return Promise.reject(error)
   }
 )
@@ -156,6 +158,7 @@ export function postsign(code: string, provider: string) {
       }
     })
     .catch(error => {
+      Sentry.captureException(error);
       alert('로그인을 다시 시도해주세요.')
       throw error
     })
@@ -178,6 +181,7 @@ export const postgoogleAuth = (googleAuthData: GoogleAuthBody) => {
       return postsign(res.data.access_token, 'google')
     })
     .catch(error => {
+      Sentry.captureException(error);
       console.error('Google Auth Error:', error.response?.data || error.message)
       alert('로그인을 다시 시도해주세요')
       throw error
@@ -194,6 +198,7 @@ axiosInstance.interceptors.request.use(
     return request
   },
   error => {
+    Sentry.captureException(error);
     return Promise.reject(error)
   }
 )
@@ -210,6 +215,7 @@ export const postUserData = async (userData: {
   try {
     await axiosInstance.post('/user', userData)
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error posting user data:', error)
     throw error
   }
@@ -265,6 +271,7 @@ export const getNoticeFiltered = async (
     console.log(response.data)
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching notices:', error)
     throw error
   }
@@ -275,7 +282,7 @@ export const getNoticeSite = async (): Promise<string[]> => {
     const response = await axiosInstance.get<string[]>('/notice/university')
     console.log(response)
     return response.data
-  } catch (error) {
+  } catch (error) { 
     console.error('Error fetching site notices:', error)
     throw error
   }
@@ -290,6 +297,7 @@ export const getNoticeDepartment = async (
     )
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching department notices:', error)
     throw error
   }
@@ -304,6 +312,7 @@ export const getNoticeDepartment2 = async (
     )
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching department notices:', error)
     throw error
   }
@@ -313,6 +322,7 @@ export const toggleBookmark = async (id: string): Promise<boolean> => {
     const response = await axiosInstance.post('/notice/bookmark', { id })
     return response.data.is_bookmarked
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error toggling bookmark:', error)
     throw error
   }
@@ -349,6 +359,7 @@ export const fetchRecruitments = async (
       bookmark: item.is_bookmarked,
     }))
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching recruitment data:', error)
     return []
   }
@@ -367,6 +378,7 @@ export const fetchFallbackImage = async (
     })
     return response.data.imageUrl
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching fallback image:', error)
     throw error
   }
@@ -376,6 +388,7 @@ export const toggleBookmark2 = async (id: string): Promise<boolean> => {
     const response = await axiosInstance.post('/saramin/bookmark', { id })
     return response.data.is_bookmarked
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error toggling bookmark:', error)
     throw error
   }
@@ -396,6 +409,7 @@ export const postContentsRequest = async (
     )
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error in postContentsRequest:', error)
     throw error
   }
@@ -406,6 +420,7 @@ export const getSaraminTags = async (): Promise<Record<string, string[]>> => {
     const response = await axiosInstance.get('/saramin/tag')
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching Saramin tags:', error)
     throw error
   }
@@ -449,6 +464,7 @@ export const getBookmarkedNotices = async (
     console.log(response.data)
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching bookmarked notices:', error)
     throw error
   }
@@ -490,6 +506,7 @@ export const getBookmarkedSaramin = async (
     )
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     if (axios.isAxiosError(error)) {
       console.error('Axios 오류 상세:', {
         메시지: error.message,
@@ -518,6 +535,7 @@ export const getBookmarkStats = async (): Promise<BookmarkStats> => {
     console.log('Fetching bookmark stats:', response.data)
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching bookmark stats:', error)
     throw error
   }
@@ -547,6 +565,7 @@ export const getUserData = async (): Promise<UserData> => {
     const response = await axiosInstance.get<UserData>('/user')
     return response.data
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error fetching user data:', error)
     throw error
   }
@@ -565,6 +584,7 @@ export const updateUserUniversity = async (
     await axiosInstance.patch('/user/university', data)
     console.log('update:',data);
   } catch (error) {
+    Sentry.captureException(error);
     console.error('Error updating user university data:', error)
     throw error
   }
@@ -593,6 +613,7 @@ export const deleteUser = async (): Promise<void> => {
     await axiosInstance.delete('/auth/user');
     console.log('사용자 계정이 성공적으로 삭제되었습니다.');
   } catch (error) {
+    Sentry.captureException(error);
     if (axios.isAxiosError(error)) {
       console.error('사용자 삭제 중 오류 발생:', {
         메시지: error.message,

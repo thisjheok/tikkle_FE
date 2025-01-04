@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Notice from './notice'
+import useNoticeStore from './noticeStore'
 import {
   getNoticeFiltered,
   NoticeResponse,
   Notice as NoticeType,
 } from '../../../api'
-
+import * as Sentry from '@sentry/react';
+import Loading from '../../Loading';
 interface NoticemainProps {
   activeTab: string
   onTagListUpdate: (tagList: string[]) => void
@@ -14,7 +16,7 @@ interface NoticemainProps {
 }
 
 const Noticemain: React.FC<NoticemainProps> = ({
-  activeTab,
+  activeTab, 
   onTagListUpdate,
   searchTerm,
   selectedDepartment,
@@ -29,7 +31,8 @@ const Noticemain: React.FC<NoticemainProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [page, setPage] = useState<number>(1)
   const prevPageRef = useRef<number>(1)
-
+  const { notices: cachedNotices, updateCache, shouldFetchNewData } = useNoticeStore()
+  
   const ITEMS_PER_PAGE = 20
   const MAX_PAGES = 50 // 최대 페이지 수 설정
 
@@ -47,6 +50,11 @@ const Noticemain: React.FC<NoticemainProps> = ({
     setIsLoading(true)
     setError(null)
     try {
+      if (page === 1 && !shouldFetchNewData(activeTab, searchTerm, selectedDepartment)) {
+        setNotices(cachedNotices)//캐싱 
+        return
+      }
+
       const response: NoticeResponse = await getNoticeFiltered(
         ITEMS_PER_PAGE,
         page,
@@ -63,6 +71,7 @@ const Noticemain: React.FC<NoticemainProps> = ({
 
       if (page === 1) {
         setNotices(response.data)
+        updateCache(response.data, activeTab, searchTerm, selectedDepartment)
       } else {
         setNotices(prevNotices => [...prevNotices, ...response.data])
       }
@@ -75,6 +84,7 @@ const Noticemain: React.FC<NoticemainProps> = ({
       prevSearchTermRef.current = searchTerm
       prevDepartmentRef.current = selectedDepartment
     } catch (err) {
+      Sentry.captureException(err);
       setError(
         '공지사항을 불러올 수 없습니다. 새로고침 혹은 로그인을 진행해주세요.'
       )
@@ -88,7 +98,10 @@ const Noticemain: React.FC<NoticemainProps> = ({
     page,
     searchTerm,
     hasMore,
-    selectedDepartment, // 'selectedDepartment'를 의존성 배열에 추가
+    selectedDepartment,
+    shouldFetchNewData,
+    cachedNotices,
+    updateCache,
   ])
 
   useEffect(() => {
@@ -125,10 +138,11 @@ const Noticemain: React.FC<NoticemainProps> = ({
   }, [containerRef, isLoading, hasMore])
 
   if (isLoading && notices.length === 0) {
-    return <p>로딩 중...</p>
+    return <Loading/>
   }
 
   if (error) {
+    Sentry.captureException(error);
     return <div>{error}</div>
   }
 

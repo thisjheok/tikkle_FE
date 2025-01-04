@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
         <div className="Footer-Container">
           <div className="Footer-Logo">2024 티끌. AII RIGHT RESERVED.</div>
           <div className="Footer-text">
-            <div>tikkeul@gmail.com</div>인천광역시 미추홀구 인하로 100
+            <div>tikkeul@gmail.com</div>
           </div>
         </div>
         <div className="Footer-up" onClick={scrollToTop}>

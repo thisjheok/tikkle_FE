@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import './recruitment.css'
 import { postContentsRequest } from '../../../api'
-
+import { motion } from 'framer-motion'
+import * as Sentry from '@sentry/react';
 interface RecruitmentCardProps {
   id: string // 새로 추가된 prop
   companyimg: string
@@ -81,12 +82,20 @@ const RecruitmentCard: React.FC<RecruitmentCardProps> = ({
       }
       window.open(url, '_blank')
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Error posting contents request:', error)
     }
   }
 
   return (
-    <div className="recruitment-mainBox" onClick={handleCardClick}>
+    <motion.div 
+      className="recruitment-mainBox" 
+      onClick={handleCardClick}
+      whileHover={{
+        scale: 1.03,
+        transition: { type: "spring", stiffness: 400, damping: 10 }
+      }}
+    >
       <div className="recruitment-Box1">
         <div className="recruitment-company">
           <img
@@ -135,7 +144,7 @@ const RecruitmentCard: React.FC<RecruitmentCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
+      </motion.div>
   )
 }
 

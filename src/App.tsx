@@ -1,11 +1,15 @@
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import Home from './Pages/Home'
+import Loading from './Components/Loading'
 import './App.css'
 import { ThemeProvider } from './assets/Theme/ThemeContext'
+import { useState, useEffect } from 'react'
+
 const ROUTE_PATH = {
   HOME: '/',
   LOGIN: '/login',
 }
+
 const router = createMemoryRouter([
   {
     path: ROUTE_PATH.HOME,
@@ -14,6 +18,28 @@ const router = createMemoryRouter([
 ])
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const handleLoading = () => {
+      setIsLoading(false)
+    }
+
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      handleLoading()
+    } else {
+      document.addEventListener('DOMContentLoaded', handleLoading)
+    }
+
+    return () => {
+      document.removeEventListener('DOMContentLoaded', handleLoading)
+    }
+  }, [])
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <ThemeProvider>
       <RouterProvider router={router} />

@@ -7,7 +7,7 @@ import Search from '../Components/Search/Searchbar'
 import Main from '../Components/Main/main'
 import { getUserData, UserData } from '../api' // api 경로를 적절히 수정하세요
 // import ThemeSelector from '../assets/Theme/ThemeSelector'
-
+import * as Sentry from '@sentry/react';
 const Home: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -18,6 +18,7 @@ const Home: React.FC = () => {
         const data = await getUserData()
         setUserData(data)
       } catch (error) {
+        Sentry.captureException(error);
         console.error('Failed to fetch user data:', error)
       } finally {
         setIsLoading(false)
@@ -45,7 +46,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Header userData={userData} />
       <Search userData={userData} />
       {/* <ThemeSelector/> */}
       <Main userData={userData} />

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 import './Searchbar.css'
 import '../../App.css'
 import axiosInstance, { UserData } from '../../api'
-
+import * as Sentry from '@sentry/react';
+import Bell from './Bell';
 interface Platform {
   name: string
   url: string
@@ -39,13 +40,20 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
 
   useEffect(() => {
     if (userData && Array.isArray(userData.bookmarked_link)) {
+      console.log('원본 북마크 데이터:', userData.bookmarked_link)
+
       const userPlatforms = (userData.bookmarked_link as BookmarkedLink[]).map(
-        link => ({
-          name: link.title,
-          url: link.uri.startsWith('http') ? link.uri : `https://${link.uri}`,
-          state: link.state,
-        })
+        link => {
+          console.log('변환 전 링크 데이터:', link)
+          
+          return {
+            name: link.title,
+            url: link.uri.startsWith('http') ? link.uri : `https://${link.uri}`,
+            state: true
+          }
+        }
       )
+      console.log('변환된 플랫폼 데이터:', userPlatforms)
       setPlatforms(userPlatforms)
     }
   }, [userData])
@@ -65,14 +73,32 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
 
   const updateBookmark = async (bookmark: BookmarkUpdate) => {
     try {
-      const response = await axiosInstance.post(API_URL, bookmark)
-      if (response.status === 200) {
-        console.log('북마크 업데이트 성공')
-      } else {
-        throw new Error('북마크 업데이트 실패')
+      console.log('북마크 업데이트 요청:', bookmark)
+      
+      const response = await axiosInstance.post(API_URL, {
+        uri: bookmark.uri,
+        title: bookmark.title,
+        state: bookmark.state
+      })
+      
+      console.log('북마크 업데이트 성공:', response.data)
+      return response
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        console.log('409 에러 상세 정보:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data,
+          message: error.message
+        })
+      
+        return { 
+          status: 409, 
+          data: error.response.data 
+        }
       }
-    } catch (error) {
-      console.error('북마크 업데이트 중 오류 발생:', error)
+      console.error('북마크 업데이트 실패:', error.response?.data || error.message)
+      Sentry.captureException(error)
       throw error
     }
   }
@@ -102,26 +128,36 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
       setNewPlatformUrl('')
       setShowAddPlatformModal(false)
     } catch (error) {
+      Sentry.captureException(error);
       alert('북마크 추가에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
   const handleDeletePlatform = async (url: string) => {
-    const platformToDelete = platforms.find(platform => platform.url === url)
-    if (!platformToDelete) return
-
     try {
-      await updateBookmark({
+      const platformToDelete = platforms.find(platform => platform.url === url)
+      if (!platformToDelete) {
+        console.log('삭제할 북마크를 찾을 수 없습니다:', url)
+        return
+      }
+
+      console.log('삭제할 북마크:', platformToDelete)
+
+      const result = await updateBookmark({
         uri: platformToDelete.url,
         title: platformToDelete.name,
-        state: false,
+        state: false
       })
 
-      const filteredPlatforms = platforms.filter(
-        platform => platform.url !== url
-      )
-      setPlatforms(filteredPlatforms)
+      if (result?.status === 200) {
+        setPlatforms(prevPlatforms => 
+          prevPlatforms.filter(platform => platform.url !== url)
+        )
+        console.log('북마크 삭제 완료')
+      }
     } catch (error) {
+      console.error('북마크 삭제 실패:', error)
+      Sentry.captureException(error)
       alert('북마크 삭제에 실패했습니다. 다시 시도해주세요.')
     }
   }
@@ -160,7 +196,7 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
               <img
                 src={
                   platform.imgSrc ||
-                  `https://www.google.com/s2/favicons?domain=${platform.url}`
+                  `https://www.google.com/s2/favicons?domain=${platform.url}&sz=128`
                 }
                 alt={`${platform.name} logo`}
                 className={platform.imgSrc ? 'Platform-icon' : 'Favicon-icon'}
@@ -226,6 +262,9 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
           </button>
         </div>
       </Modal>
+      <div className='Search-Notice'>
+        <Bell/>
+      </div>
     </div>
   )
 }

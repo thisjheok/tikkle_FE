@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './Recruit.css'
 import { toast } from 'react-toastify'
 import { getSaraminTags, getUserData, updateUserSaraminSubscriptions } from '../../../api'
-
+import * as Sentry from '@sentry/react';
 interface FieldSelection {
   field: string
   subField: string
@@ -45,6 +45,7 @@ const Recruit: React.FC<RecruitProps> = ({ onClose }) => {
           setFieldSelections(userSelections);
         }
       } catch (error) {
+        Sentry.captureException(error);
         console.error('데이터 가져오기 오류:', error)
       }
     }
@@ -83,7 +84,8 @@ const Recruit: React.FC<RecruitProps> = ({ onClose }) => {
       console.log('구독 정보가 성공적으로 업데이트되었습니다.');
       onClose();
       setTimeout(() => window.location.reload(), 1000);
-    } catch (error) {
+    } catch (error) { 
+      Sentry.captureException(error);
       console.error('구독 정보 업데이트 중 오류 발생:', error);
       toast.error('구독 정보 업데이트에 실패했습니다.');
     }

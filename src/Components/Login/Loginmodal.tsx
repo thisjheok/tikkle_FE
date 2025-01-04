@@ -75,14 +75,23 @@ const LoginModal: React.FC<LoginModalProps> = ({
             </div>
           </motion.div>
           <div className="Login-social-button">
-            <motion.div variants={item} onClick={onGoogleLogin}>
+            <motion.div variants={item} onClick={onGoogleLogin} className="login-button-wrapper">
               <div className="Login-google">구글 로그인</div>
+              {localStorage.getItem('last_login_type') === 'google' && (
+                <span className="last-login-badge">최근 로그인</span>
+              )}
             </motion.div>
-            <motion.div variants={item} onClick={onNaverLogin}>
+            <motion.div variants={item} onClick={onNaverLogin} className="login-button-wrapper">
               <div className="Login-naver">네이버 로그인</div>
+              {localStorage.getItem('last_login_type') === 'naver' && (
+                <span className="last-login-badge">최근 로그인</span>
+              )}
             </motion.div>
-            <motion.div variants={item} onClick={onKakaoLogin}>
+            <motion.div variants={item} onClick={onKakaoLogin} className="login-button-wrapper">
               <div className="Login-kakao">카카오 로그인</div>
+              {localStorage.getItem('last_login_type') === 'kakao' && (
+                <span className="last-login-badge">최근 로그인</span>
+              )}
             </motion.div>
           </div>
         </div>

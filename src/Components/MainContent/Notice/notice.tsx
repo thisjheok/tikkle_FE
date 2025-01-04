@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import './notice.css'
 import { toggleBookmark, postContentsRequest } from '../../../api'
+import * as Sentry from '@sentry/react';
+import { motion } from 'framer-motion'
 
 interface Notice {
   id: string
@@ -34,6 +36,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
         onBookmarkUpdate(notice.id, !isBookmarked)
       }
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Failed to update bookmark status:', error)
       // 에러 처리: 사용자에게 알림을 표시하거나 다른 적절한 처리를 수행
     } finally {
@@ -46,13 +49,21 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
       await postContentsRequest('공지', notice.id)
       window.open(notice.url, '_blank', 'noopener,noreferrer')
     } catch (error) {
+      Sentry.captureException(error);
       console.error('Error posting contents request:', error)
       // 에러 처리: 사용자에게 알림을 표시하거나 다른 적절한 처리를 수행
     }
   }
 
   return (
-    <div className="notice" onClick={handleNoticeClick}>
+    <motion.div 
+      className="notice" 
+      onClick={handleNoticeClick}
+      whileHover={{
+        scale: 1.03,
+        transition: { type: "spring", stiffness: 400, damping: 10 }
+      }}
+    >
       <span className={`department ${notice.top ? 'notice-highlight' : ''}`}>
         {notice.top ? '[공지]' : notice.index}
       </span>
@@ -64,7 +75,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
         className={`bookmark-icon ${isUpdating ? 'updating' : ''}`}
         onClick={handleBookmarkClick}
       />
-    </div>
+    </motion.div>
   )
 }
 

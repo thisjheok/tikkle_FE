@@ -10,6 +10,8 @@ import Department from './Department/Department'
 import RecruitmentContainer from './Recruitment/recruitment'
 import Job from './job/job'
 import { UserData } from '../../api'
+import Mypageinfo from '../modal/Mypageinfomodal'
+
 interface ContentSelectorProps {
   userData: UserData | null
 }
@@ -25,6 +27,7 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
   // const [tagList, setTagList] = useState<string[]>([]) // Keep this if needed
   const notices = ['공지사항', '채용공고', '장학', '대외활동', '공모전']
   const [selectedJob, setSelectedJob] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleTagListUpdate = (tags: string[]) => {
     // setTagList(tags)
@@ -87,7 +90,7 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
 
   return (
     <div className="Content-selector">
-      {userData && <p>Welcome, {userData.name}!</p>}
+      <Mypageinfo isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div className="Content-Selector-main">
         {notices.map(notice => (
           <div

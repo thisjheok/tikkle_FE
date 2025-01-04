@@ -1,145 +1,95 @@
-import React, { useState, useEffect } from 'react'
-import './Myschool.css'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import {
-  getUserData,
-  updateUserUniversity,
-  getNoticeDepartment,
-  getNoticeSite,
-  getNoticeDepartment2,
-} from '../../../api'
-
-// interface FormData {
-//   school: string
-//   campus: string
-//   major: string
-//   year: string
-//   relatedSubject: string
-//   bookOrLectureNote: string
-// }
-
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import Loading from '../../Loading';
+import { 
+  fetchSchools, 
+  fetchDepartments, 
+  fetchDepartments2,
+  updateSchoolInfo,
+  setSelectedSchool,
+  setSelectedDepartment,
+  setSubscribeDepartments,
+  fetchUserSchoolData
+} from '../../../store/slices/schoolSlice';
+import { RootState } from '../../../store/store';
+import './Myschool.css';
+import { AppDispatch } from '../../../store/store';
+import * as Sentry from '@sentry/react';
 interface MySchoolProps {
   onClose: () => void;
 }
 
-const Myschool: React.FC<MySchoolProps> = ({ onClose })=> {
-  // const [formData, setFormData] = useState<FormData>({
-  //   school: '',
-  //   campus: '',
-  //   major: '',
-  //   year: '',
-  //   relatedSubject: '',
-  //   bookOrLectureNote: '',
-  // })
+const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { 
+    schools,
+    departments,
+    departments2,
+    selectedSchool,
+    selectedDepartment,
+    subscribeDepartments,
+    loading,
+    error 
+  } = useSelector((state: RootState) => state.school);
 
-
-  const [school, setSchool] = useState('')
-  const [department, setDepartment] = useState('')
-  const [schools, setSchools] = useState<string[]>([])
-  const [departments, setDepartments] = useState<string[]>([])
-  const [departments2, setDepartments2] = useState<string[]>([])
-  const [subscribeDepartments, setSubscribeDepartments] = useState<string[]>(['', '', '', ''])
-
+  // 컴포넌트 마운트 시 사용자 데이터 로드
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await getUserData();
-        setSchool(userData.university);
-        setDepartment(userData.department);
-        
-        // '전체공지' 제외
-        const filteredNotices = userData.subscribe_notices_without_filter.filter(dept => dept !== '전체공지');
-        setSubscribeDepartments(filteredNotices.concat(Array(4 - filteredNotices.length).fill('')));
-        
-        console.log('구독학과:', filteredNotices);
-      } catch (error) {
+    dispatch(fetchUserSchoolData())
+      .catch(error => {
+        Sentry.captureException(error);
         console.error('사용자 데이터를 불러오는 데 실패했습니다:', error);
         toast.error('사용자 정보를 불러오는 데 실패했습니다.');
-      }
-    };
-  
-    fetchUserData();
-  }, []);
-  
+      });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchSchools());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedSchool) {
+      dispatch(fetchDepartments(selectedSchool));
+      dispatch(fetchDepartments2(selectedSchool));
+    }
+  }, [selectedSchool, dispatch]);
+
+  const handleSchoolChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch(setSelectedSchool(e.target.value));
+  };
+
+  const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch(setSelectedDepartment(e.target.value));
+  };
 
   const handleSubscribeDepartmentChange = (index: number, value: string) => {
-    const newSubscribeDepartments = [...subscribeDepartments]
-    newSubscribeDepartments[index] = value
-    setSubscribeDepartments(newSubscribeDepartments)
-  }
+    const newSubscribeDepartments = [...subscribeDepartments];
+    newSubscribeDepartments[index] = value;
+    dispatch(setSubscribeDepartments(newSubscribeDepartments));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const updateData = {
-        university: school,
-        department: department,
+      await dispatch(updateSchoolInfo({
+        university: selectedSchool,
+        department: selectedDepartment,
         subscribe_notices: subscribeDepartments.filter(dept => dept !== '')
-      };
-      await updateUserUniversity(updateData);
+      })).unwrap();
+      
       toast.success('학교 정보가 성공적으로 업데이트되었습니다.');
       onClose();
       setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
-      console.error('학교 정보 업데이트 실패:', error);
+      Sentry.captureException(error);
       toast.error('학교 정보 업데이트에 실패했습니다.');
     }
-  }
+  };
 
-  useEffect(() => {
-    const fetchSchools = async () => {
-      try {
-        const schoolOptions: string[] = await getNoticeSite()
-        setSchools(schoolOptions)
-      } catch (error) {
-        console.error('Error fetching schools:', error)
-        toast.error('학교 목록을 불러오는 데 실패했습니다.')
-      }
-    }
+  if (loading) return <Loading type="mypage" />;
+  if (error) return <div>에러: {error}</div>;
 
-    fetchSchools()
-  }, [])
-
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      if (school) {
-        try {
-          const departmentOptions: string[] = await getNoticeDepartment(school)
-          setDepartments(departmentOptions)
-        } catch (error) {
-          console.error('Error fetching departments:', error)
-          toast.error('학과 목록을 불러오는 데 실패했습니다.')
-        }
-      } else {
-        setDepartments([])
-      }
-    }
-
-    fetchDepartments()
-  }, [school])
-
-  useEffect(() => {
-    const fetchDepartments2 = async () => {
-      if (school) {
-        try {
-          const departmentOptions2: string[] = await getNoticeDepartment2(
-            school
-          )
-          setDepartments2(departmentOptions2)
-        } catch (error) {
-          console.error('Error fetching departments:', error)
-          toast.error('구독 가능한 학과 목록을 불러오는 데 실패했습니다.')
-        }
-      } else {
-        console.log('fail');
-        setDepartments2([])
-      }
-    }
-
-    fetchDepartments2()
-  }, [school])
-
+  // JSX는 기존과 동일하되 state 대신 Redux store의 값을 사용
   return (
     <div className="Myschool-All">
       <div className="Myschool-title">
@@ -152,12 +102,8 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose })=> {
             <div className="Myschool-text-Container">
               <label htmlFor="school">학교</label>
               <select
-                value={school}
-                onChange={e => {
-                  setSchool(e.target.value)
-                  setDepartment('') // 학교 변경 시 학과 초기화
-                  setSubscribeDepartments(['', '', '', '']) // 관심 학과 초기화
-                }}
+                value={selectedSchool}
+                onChange={handleSchoolChange}
               >
                 <option value="" disabled>
                   학교를 선택해주세요
@@ -172,8 +118,8 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose })=> {
             <div className="Myschool-text-Container">
               <label htmlFor="campus">학과</label>
               <select
-                value={department}
-                onChange={e => setDepartment(e.target.value)}
+                value={selectedDepartment}
+                onChange={handleDepartmentChange}
               >
                 <option value="" disabled>
                   학과를 선택해주세요

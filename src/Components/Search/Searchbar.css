@@ -9,7 +9,6 @@
   align-items: center;
   margin-top: 30.3px;
   margin-bottom: -20.54px;
-  gap: 40px;
 }
 
 .Search-bar {
@@ -35,6 +34,7 @@
 .Search-container {
   position: relative;
   display: inline-block;
+  margin-bottom: 40px;
 }
 
 .Search-img {
@@ -97,10 +97,12 @@
 }
 
 .Favicon-icon {
-  width: 35px;
-  height: 35px;
+  width: 16px;
+  height: 16px;
   margin-top: 4px;
   margin-bottom: 1px;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 .Delete-button {
   position: absolute;
@@ -227,6 +229,19 @@
 .SearchBoxicon {
   margin-right: 10px;
 }
+
+.Search-Notice {
+  display: flex;
+  width: 1090px;
+  justify-content: right;
+  cursor: pointer;
+}
+@media (min-width: 1500px) {
+  .Search-Notice {
+    width: 1400px;
+  }
+}
+
 @media (max-width: 1100px) {
   .Search-bar {
     width: 554px;
@@ -236,6 +251,12 @@
   }
   .SearchBoxConatiner {
     margin-left: 643px;
+  }
+  .Search-Notice {
+    display: flex;
+    width: 790px;
+    justify-content: right;
+    cursor: pointer;
   }
 }
 

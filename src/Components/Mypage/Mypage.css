@@ -149,6 +149,7 @@
   background: #fff;
   overflow: hidden;
   box-shadow: 0px 0.713px 21.401px 0px rgba(217, 217, 217, 0.54);
+  min-width: 694px;
 }
 
 .Toastify__toast-container {

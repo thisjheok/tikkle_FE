@@ -1,7 +1,7 @@
 import React from 'react'
 import './Mypagemodal.css'
 import { KAKAO_SDK_ID } from '../../../store/slices/constant'
-
+import * as Sentry from '@sentry/react';
 declare global {
   interface Window {
     Kakao: any
@@ -31,6 +31,7 @@ const Recommend: React.FC = () => {
           kakao.init(KAKAO_SDK_ID)
         } else {
           console.error('Kakao API key is not defined')
+          Sentry.captureException('Kakao API key is not defined');
           return
         }
       }

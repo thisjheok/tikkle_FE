@@ -10,7 +10,7 @@ interface LoginButtonProps {
 const LoginButton: React.FC<LoginButtonProps> = ({ onClick, isLoggedIn }) => {
   return (
     <div className="Login-button" onClick={onClick}>
-      {isLoggedIn ? '로그아웃' : '로그인'}
+      {isLoggedIn ? '' : '로그인'}
     </div>
   )
 }

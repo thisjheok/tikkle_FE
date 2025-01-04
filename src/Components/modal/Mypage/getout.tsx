@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './Mypagemodal.css'
 import {deleteUser} from '../../../api'
-
+import * as Sentry from '@sentry/react';
 const Getout: React.FC = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false)
 
@@ -24,6 +24,7 @@ const Getout: React.FC = () => {
       handleLogout(); // 탈퇴 완료 후 로그아웃 실행
     } catch (error) {
       console.error('탈퇴 처리 중 오류가 발생했습니다:', error);
+      Sentry.captureException(error);
       // 여기에 사용자에게 오류 메시지를 보여주는 로직을 추가할 수 있습니다.
     }
   }

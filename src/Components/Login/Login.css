@@ -418,3 +418,23 @@ input:checked + label {
     font-size: 16px;
   }
 }
+
+.login-button-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.last-login-badge {
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  font-size: 11px;
+  color: #4A90E2;
+  background-color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  font-weight: 500;
+  z-index: 1;
+}
