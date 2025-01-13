@@ -98,9 +98,8 @@ const Header: React.FC<HeaderProps> = ({ userData }) => {
       <div className="Header-left">
         <div className="Header-text" onClick={handleClick}>
           <img
-            src="img/Logo/Mainlogo.svg"
+            src="img/Logo/MainLogo4.svg"
             alt="Main Logo"
-            style={{ width: '30%' }}
           />
         </div>
       </div>

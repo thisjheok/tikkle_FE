@@ -117,6 +117,7 @@
   .Recruit-Conatiner2 {
     display: flex;
     gap: 80px;
+    margin-left: 20px;
   }
   .Recruit-text-Container label {
     font-size: 15px;
