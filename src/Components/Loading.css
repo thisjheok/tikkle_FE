@@ -1,6 +1,6 @@
 /* src/Components/Loading/Loading.css */
 .loading-wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -58,6 +58,7 @@
 @media (max-width: 1570px) and (min-height: 901px) {
   .loading-mypage {
     height: 480px;
+    margin-top: 300px;
   }
   .spinner {
     width: 12px;

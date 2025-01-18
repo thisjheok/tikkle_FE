@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import LoginModal2 from '../modal/Loginmodal2'
 import Mypageinfo from '../modal/Mypageinfomodal'
 import { useState } from 'react'
-
+import './Bell.css'
 const Bell = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -21,7 +21,7 @@ const Bell = () => {
   }
 
   return (
-    <>
+    <div className='Bell'>
       <motion.div
         whileHover={{
           scale: 1.2,
@@ -37,7 +37,7 @@ const Bell = () => {
         onClose={() => setIsLoginModalOpen(false)}
       />
       <Mypageinfo isOpen={isModalOpen} onClose={closeModal} />
-    </>
+    </div>
   )
 }
 

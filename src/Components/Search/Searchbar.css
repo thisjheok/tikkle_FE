@@ -234,7 +234,6 @@
   display: flex;
   width: 1090px;
   justify-content: right;
-  cursor: pointer;
 }
 @media (min-width: 1500px) {
   .Search-Notice {
@@ -256,7 +255,6 @@
     display: flex;
     width: 790px;
     justify-content: right;
-    cursor: pointer;
   }
 }
 
