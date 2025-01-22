@@ -3,6 +3,7 @@ import LoginModal2 from '../modal/Loginmodal2'
 import Mypageinfo from '../modal/Mypageinfomodal'
 import { useState } from 'react'
 import './Bell.css'
+
 const Bell = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)

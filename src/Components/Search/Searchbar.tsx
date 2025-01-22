@@ -1,11 +1,15 @@
-import React, { useState, ChangeEvent, KeyboardEvent, useEffect } from 'react'
-import Modal from '../modal/modal'
+import React, { useState, ChangeEvent, KeyboardEvent, useEffect, Suspense, lazy } from 'react'
 import { motion } from 'framer-motion'
 import './Searchbar.css'
 import '../../App.css'
 import axiosInstance, { UserData } from '../../api'
-import * as Sentry from '@sentry/react';
-import Bell from './Bell';
+import * as Sentry from '@sentry/react'
+import Bell from './Bell'
+import Loading from '../Loading'
+
+// Modal을 lazy loading으로 변경
+const Modal = lazy(() => import('../modal/modal'))
+
 interface Platform {
   name: string
   url: string
@@ -220,48 +224,52 @@ const Searchbar: React.FC<SearchbarProps> = ({ userData }) => {
           </button>
         )}
       </div>
-      <Modal
-        isOpen={showAddPlatformModal}
-        onClose={() => setShowAddPlatformModal(false)}
-        customCloseButton={
-          <motion.button
-            className="custom-close-button"
-            onClick={() => setShowAddPlatformModal(false)}
+      {showAddPlatformModal && (
+        <Suspense fallback={<Loading />}>
+          <Modal
+            isOpen={showAddPlatformModal}
+            onClose={() => setShowAddPlatformModal(false)}
+            customCloseButton={
+              <motion.button
+                className="custom-close-button"
+                onClick={() => setShowAddPlatformModal(false)}
+              >
+                취소
+              </motion.button>
+            }
           >
-            취소
-          </motion.button>
-        }
-      >
-        <div className="Add-platform-form">
-          <div className="Add-plaform-maintxt">바로가기 추가</div>
-          <div className="Search-new-platform">
-            <label>이름</label>
-            <input
-              type="text"
-              placeholder="새 플랫폼 이름"
-              value={newPlatformName}
-              onChange={e => setNewPlatformName(e.target.value)}
-              className="Search-new-platform-name"
-            />
-          </div>
-          <div className="Search-new-platform">
-            <label>URL</label>
-            <input
-              type="text"
-              placeholder="새 플랫폼 URL"
-              value={newPlatformUrl}
-              onChange={e => setNewPlatformUrl(e.target.value)}
-              className="Search-new-platform-URL"
-            />
-          </div>
-          <button
-            className="Search-newplatfrom-sumbit"
-            onClick={handleAddPlatform}
-          >
-            저장
-          </button>
-        </div>
-      </Modal>
+            <div className="Add-platform-form">
+              <div className="Add-plaform-maintxt">바로가기 추가</div>
+              <div className="Search-new-platform">
+                <label>이름</label>
+                <input
+                  type="text"
+                  placeholder="새 플랫폼 이름"
+                  value={newPlatformName}
+                  onChange={e => setNewPlatformName(e.target.value)}
+                  className="Search-new-platform-name"
+                />
+              </div>
+              <div className="Search-new-platform">
+                <label>URL</label>
+                <input
+                  type="text"
+                  placeholder="새 플랫폼 URL"
+                  value={newPlatformUrl}
+                  onChange={e => setNewPlatformUrl(e.target.value)}
+                  className="Search-new-platform-URL"
+                />
+              </div>
+              <button
+                className="Search-newplatfrom-sumbit"
+                onClick={handleAddPlatform}
+              >
+                저장
+              </button>
+            </div>
+          </Modal>
+        </Suspense>
+      )}
       <div className='Search-Notice'>
         <Bell/>
       </div>

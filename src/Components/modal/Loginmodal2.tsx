@@ -18,7 +18,7 @@ const container = {
     },
   },
 }
-
+//로그인 해주세요 하는 모달
 const LoginModal2: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

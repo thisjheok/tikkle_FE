@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, Suspense, lazy } from 'react'
 import './Header.css'
 import AuthHandler from '../Login/AuthHandler'
-import MyPageModal from '../Mypage/Mypage'
+import Loading from '../Loading'
+const MyPageModal = lazy(() => import('../Mypage/Mypage'))
 // import { KAKAO_SDK_ID } from '../../store/slices/constant'
 import { UserData } from '../../api'
 declare global {
@@ -120,11 +121,15 @@ const Header: React.FC<HeaderProps> = ({ userData }) => {
           <AuthHandler />
         </div>
       </div>
-      <MyPageModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        initialSelectedIndex={modalIndex}
-      />
+      <Suspense fallback={<Loading />}>
+        {isModalOpen && (
+          <MyPageModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            initialSelectedIndex={modalIndex}
+          />
+        )}
+      </Suspense>
     </header>
   )
 }

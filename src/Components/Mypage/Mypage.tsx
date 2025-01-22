@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense, lazy } from 'react'
 import Modal from '../modal/modal'
 import { motion } from 'framer-motion'
 import './Mypage.css'
 import History from './History/History'
-import Myschool from './Myschool/Myschool'
 import Recruit from './Recruit/Recruit'
 import Activites from './Activites/Activites'
 import Contest from './Contest/Contest'
-import Mypageinfo from '../modal/Mypageinfomodal'
 import DoLogin from './DoLogin'
-import LoginModal2 from '../modal/Loginmodal2'
+import Loading from '../Loading'
 import { getUserData, UserData } from '../../api'
 import * as Sentry from '@sentry/react';
+
 interface MyPageModalProps {
   isOpen: boolean
   onClose: () => void
@@ -33,6 +32,8 @@ const item = {
   hidden: { y: 20, opacity: 0 },
   visible: { y: 0, opacity: 1 },
 }
+
+const Myschool = lazy(() => import('./Myschool/Myschool'))
 
 const selecterData = [
   {
@@ -66,6 +67,10 @@ const selecterData = [
     content: Contest,
   },
 ]
+
+const Mypageinfo = lazy(() => import('../modal/Mypageinfomodal'))
+const LoginModal2 = lazy(() => import('../modal/Loginmodal2'))
+
 const MyPageModal: React.FC<MyPageModalProps> = ({
   isOpen,
   onClose,
@@ -110,8 +115,11 @@ const MyPageModal: React.FC<MyPageModalProps> = ({
     } else {
       // 다른 컨텐츠 선택 시
       if (isLoggedIn) {
-        // 로그인한 경우
-        return SelectedComponent && <SelectedComponent onClose={onClose} />
+        return SelectedComponent && (
+          <Suspense fallback={<Loading />}>
+            <SelectedComponent onClose={onClose} />
+          </Suspense>
+        )
       } else {
         // 로그인하지 않은 경우
         return <DoLogin />
@@ -209,8 +217,14 @@ const MyPageModal: React.FC<MyPageModalProps> = ({
           </div>
         </motion.div>
       </motion.div>
-      <Mypageinfo isOpen={isModalOpen} onClose={closeModal} />
-      <LoginModal2 isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+      <Suspense fallback={<Loading />}>
+        {isModalOpen && <Mypageinfo isOpen={isModalOpen} onClose={closeModal} />}
+      </Suspense>
+      <Suspense fallback={<Loading />}>
+        {isLoginModalOpen && (
+          <LoginModal2 isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+        )}
+      </Suspense>
     </Modal>
   )
 }

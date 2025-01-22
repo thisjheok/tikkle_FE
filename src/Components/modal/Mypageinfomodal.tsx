@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, Suspense, lazy } from 'react'
 import Modal from './modal'
 import { motion } from 'framer-motion'
 import './Mypage.css'
-import Announcement from './Mypage/announcement'
-import Help from './Mypage/help'
-import Recommend from './Mypage/recommend'
-import Service from './Mypage/service'
-import Getout from './Mypage/getout'
 
+// 각 섹션 컴포넌트들을 lazy loading으로 변경
+const Announcement = lazy(() => import('./Mypage/announcement'))
+const Help = lazy(() => import('./Mypage/help'))
+const Recommend = lazy(() => import('./Mypage/recommend'))
+const Service = lazy(() => import('./Mypage/service'))
+const Getout = lazy(() => import('./Mypage/getout'))
+import Loading from '../Loading'
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
@@ -37,20 +39,26 @@ const Mypageinfo: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   }
 
   const renderContent = () => {
-    switch (selectedOption) {
-      case '공지사항':
-        return <Announcement />
-      case '고객센터 / 도움말':
-        return <Help />
-      case '친구에게 추천하기':
-        return <Recommend />
-      case '서비스 약관':
-        return <Service />
-      case '서비스 탈퇴':
-        return <Getout />
-      default:
-        return null
-    }
+    return (
+      <Suspense fallback={<Loading />}>
+        {(() => {
+          switch (selectedOption) {
+            case '공지사항':
+              return <Announcement />
+            case '고객센터 / 도움말':
+              return <Help />
+            case '친구에게 추천하기':
+              return <Recommend />
+            case '서비스 약관':
+              return <Service />
+            case '서비스 탈퇴':
+              return <Getout />
+            default:
+              return null
+          }
+        })()}
+      </Suspense>
+    )
   }
 
   return (

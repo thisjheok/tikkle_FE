@@ -1,5 +1,5 @@
 // AuthHandler.tsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense, lazy } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   kakaoLogin,
@@ -8,11 +8,13 @@ import {
   GoogleAuthData,
 } from '../../store/slices/authslice'
 import { RootState } from '../../store/store'
-import LoginModal from '../Login/Loginmodal'
 import { postgoogleAuth, postsign } from '../../api'
 import LoginButton from './Loginbutton'
 import DataListener from './DataListener'
-import InfoModal from '../Login/informodal'
+import Loading from '../Loading'
+
+const LoginModal = lazy(() => import('./Loginmodal'))
+const InfoModal = lazy(() => import('../Login/informodal'))
 
 const AuthHandler: React.FC = () => {
   const params = new URLSearchParams(location.search)
@@ -155,21 +157,28 @@ const AuthHandler: React.FC = () => {
   return (
     <div>
       <DataListener onReceiveAuthData={receiveAuthData} />
-
       <LoginButton onClick={handleLoginButtonClick} isLoggedIn={isLoggedIn} />
-      <LoginModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onKakaoLogin={handleKakaoLogin}
-        onNaverLogin={handleNaverLogin}
-        onGoogleLogin={handleGoogleLogin}
-      />
-      <InfoModal
-        isOpen={isInfoModalOpen}
-        onClose={closeInfoModal}
-        onSubmit={handleSubmit}
-        onChange={handleInputChange}
-      />
+      <Suspense fallback={<Loading />}>
+        {isModalOpen && (
+          <LoginModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onKakaoLogin={handleKakaoLogin}
+            onNaverLogin={handleNaverLogin}
+            onGoogleLogin={handleGoogleLogin}
+          />
+        )}
+      </Suspense>
+      <Suspense fallback={<Loading />}>
+        {isInfoModalOpen && (
+          <InfoModal
+            isOpen={isInfoModalOpen}
+            onClose={closeInfoModal}
+            onSubmit={handleSubmit}
+            onChange={handleInputChange}
+          />
+        )}
+      </Suspense>
     </div>
   )
 }

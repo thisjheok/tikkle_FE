@@ -1,5 +1,6 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import Home from './Pages/Home'
+import { useState, useEffect } from 'react'
 import Loading from './Components/Loading'
 import './App.css'
 import { ThemeProvider } from './assets/Theme/ThemeContext'
@@ -9,16 +10,10 @@ const ROUTE_PATH = {
   LOGIN: '/login',
 }
 
-const Home = lazy(() => import('./Pages/Home'))
-
-const router = createBrowserRouter([
+const router = createMemoryRouter([
   {
     path: ROUTE_PATH.HOME,
-    element: (
-      <Suspense fallback={<Loading />}>
-        <Home />
-      </Suspense>
-    ),
+    element: <Home />,
   },
 ])
 

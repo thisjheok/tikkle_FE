@@ -47,7 +47,7 @@ export const fetchSchools = createAsyncThunk(
         now - state.school.lastFetchTime < CACHE_DURATION) {
       return state.school.schools;
     }
-    
+    console.log('학교 목록 가져오기');
     const schools = await getNoticeSite();
     return schools;
   }
