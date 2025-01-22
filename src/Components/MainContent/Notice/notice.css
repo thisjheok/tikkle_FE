@@ -83,7 +83,8 @@
   border-radius: 10px;
   background: #fff;
   color: #3c332b;
-  font-family: Pretendard;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-display: swap;
   font-size: 15px;
   font-style: normal;
   font-weight: 500;
@@ -92,7 +93,13 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
+
+.notice:hover {
+  transform: scale(1.03);
+}
+
 .department {
   width: 120px;
   flex: 0.8;

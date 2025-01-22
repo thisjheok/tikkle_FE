@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import './notice.css'
 import { toggleBookmark, postContentsRequest } from '../../../api'
 import * as Sentry from '@sentry/react';
-import { motion } from 'framer-motion'
 
 interface Notice {
   id: string
@@ -56,13 +55,9 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
   }
 
   return (
-    <motion.div 
+    <div 
       className="notice" 
       onClick={handleNoticeClick}
-      whileHover={{
-        scale: 1.03,
-        transition: { type: "spring", stiffness: 400, damping: 10 }
-      }}
     >
       <span className={`department ${notice.top ? 'notice-highlight' : ''}`}>
         {notice.top ? '[공지]' : notice.index}
@@ -75,7 +70,7 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
         className={`bookmark-icon ${isUpdating ? 'updating' : ''}`}
         onClick={handleBookmarkClick}
       />
-    </motion.div>
+    </div>
   )
 }
 

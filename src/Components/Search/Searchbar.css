@@ -85,6 +85,11 @@
   padding: 0;
 }
 
+.Search-Each-button_add img {
+  width: 30px;
+  height: 30px;
+}
+
 .Search-Each-button-container:hover,
 .Search-Each-button_add:hover {
   outline: 1px solid #dbd7d4;
@@ -228,6 +233,11 @@
 
 .SearchBoxicon {
   margin-right: 10px;
+}
+
+.SearchBoxicon img {
+  width: 14px;
+  height: 14px;
 }
 
 .Search-Notice {

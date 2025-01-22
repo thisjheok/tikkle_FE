@@ -1,19 +1,24 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
-import Home from './Pages/Home'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import Loading from './Components/Loading'
 import './App.css'
 import { ThemeProvider } from './assets/Theme/ThemeContext'
-import { useState, useEffect } from 'react'
 
 const ROUTE_PATH = {
   HOME: '/',
   LOGIN: '/login',
 }
 
-const router = createMemoryRouter([
+const Home = lazy(() => import('./Pages/Home'))
+
+const router = createBrowserRouter([
   {
     path: ROUTE_PATH.HOME,
-    element: <Home />,
+    element: (
+      <Suspense fallback={<Loading />}>
+        <Home />
+      </Suspense>
+    ),
   },
 ])
 

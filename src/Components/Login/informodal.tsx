@@ -70,47 +70,36 @@ const InfoModal: React.FC<InfoModalProps> = ({
   const accessToken = localStorage.getItem('access_token');
 
   useEffect(() => {
-    const fetchSchoolsAndTags = async () => {
-      if(!accessToken){
-        // toast.error('로그인 해주세요!')
-      }else{
+    const fetchSchools = async () => {
+      if (step === 1 && schools.length === 0 && accessToken) {
         try {
           const schoolOptions: string[] = await getNoticeSite()
           setSchools(schoolOptions)
         } catch (error) {
           Sentry.captureException(error);
           console.error('Error fetching schools:', error)
-          // toast.error('학교 정보를 불러오는데 실패했습니다.')
         }
+      }
+    }
+
+    fetchSchools()
+  }, [step, accessToken])
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      if (step === 2 && Object.keys(tags).length === 0) {
         try {
           const tagsData = await getSaraminTags()
           setTags(tagsData)
         } catch (error) { 
           Sentry.captureException(error);
           console.error('Error fetching Saramin tags:', error)
-          // toast.error('채용 분야 정보를 불러오는데 실패했습니다.')
         }
-
       }
     }
 
-    fetchSchoolsAndTags()
-  }, [])
-
-  // useEffect(() => {
-  //   const fetchTags = async () => {
-  //     try {
-  //       const tagsData = await getSaraminTags()
-  //       setTags(tagsData)
-  //     } catch (error) {
-  //       console.error('Error fetching Saramin tags:', error)
-  //       toast.error('채용 분야 정보를 불러오는데 실패했습니다.')
-  //     }
-  //   }
-
-  //   fetchTags()
-  // }, [])
-
+    fetchTags()
+  }, [step])
 
   useEffect(() => {
     const fetchDepartments = async () => {

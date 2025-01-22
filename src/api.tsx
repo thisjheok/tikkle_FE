@@ -78,11 +78,16 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config as any;
 
     if ((error.response?.status === 401 || error.response?.status === 403) && originalRequest && !originalRequest._retry) {
-
       if (isRefreshing) {
+        // Promise를 반환하여 토큰이 갱신될 때까지 대기
         return new Promise((resolve) => {
-          addRefreshSubscriber((token: string) => {
+          //현재 요청을 대기열(refreshSubscribers)에 추가
+          addRefreshSubscriber(async (token: string) => {  
+            // 새 토큰이 localStorage에 완전히 저장될 때까지 대기
+            await new Promise(resolve => setTimeout(resolve, 100));  // 토큰 저장 짧은 지연 추가
+            //새 토큰으로 헤더 업데이트
             originalRequest.headers.Authorization = `Bearer ${token}`;
+            // 원래 요청 재시도
             resolve(axiosInstance(originalRequest));
           });
         });
@@ -101,9 +106,14 @@ axiosInstance.interceptors.response.use(
         const { access_token: newAccessToken, refresh_token: newRefreshToken } =
           await refreshAccessToken(refreshToken)
 
-        // 로컬 스토리지에 새로운 액세스 토큰과 리프레시 토큰 저장
-        localStorage.setItem('access_token', newAccessToken)
-        localStorage.setItem('refresh_token', newRefreshToken)
+        // localStorage 업데이트를 기다림
+        await Promise.all([
+          localStorage.setItem('access_token', newAccessToken),
+          localStorage.setItem('refresh_token', newRefreshToken)
+        ]);
+
+        // 짧은 지연 추가하여 localStorage 업데이트 완료 보장
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // 원래 요청의 Authorization 헤더 업데이트
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
@@ -112,8 +122,11 @@ axiosInstance.interceptors.response.use(
         onRefreshed(newAccessToken) // 진행하지 못한 함수를 다시 진행
 
         // 원래 요청 재시도
-        return axiosInstance(originalRequest)
+        return await axiosInstance(originalRequest)  // await 추가
       } catch (refreshError) {
+        isRefreshing = false; // 에러 발생 시에도 isRefreshing 상태 초기화
+        refreshSubscribers = []; // 대기 중인 요청들도 초기화
+        
         Sentry.captureException(refreshError);
         console.error('토큰 갱신 오류:', refreshError)
         // 토큰 갱신 실패 시 추가 처리 (예: 사용자 로그아웃)
