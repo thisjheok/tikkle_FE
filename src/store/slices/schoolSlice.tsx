@@ -17,6 +17,7 @@ interface SchoolState {
   loading: boolean;
   error: string | null;
   lastFetchTime: number | null;
+  isInitialized: boolean;
 }
 
 const initialState: SchoolState = {
@@ -28,7 +29,8 @@ const initialState: SchoolState = {
   subscribeDepartments: ['', '', '', ''],
   loading: false,
   error: null,
-  lastFetchTime: null
+  lastFetchTime: null,
+  isInitialized: false
 };
 
 // 캐시 유효 시간을 5분으로 설정
@@ -139,7 +141,11 @@ const schoolSlice = createSlice({
       .addCase(fetchDepartments2.fulfilled, (state, action) => {
         state.departments2 = action.payload;
       })
-      // fetchUserSchoolData 처리 추가
+      // fetchUserSchoolData 처리 수정
+      .addCase(fetchUserSchoolData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchUserSchoolData.fulfilled, (state, action) => {
         state.selectedSchool = action.payload.university;
         state.selectedDepartment = action.payload.department;
@@ -150,9 +156,12 @@ const schoolSlice = createSlice({
           ...filteredDepts,
           ...Array(4 - filteredDepts.length).fill('')
         ];
+        state.loading = false;
+        state.isInitialized = true;
       })
       .addCase(fetchUserSchoolData.rejected, (state, action) => {
         state.error = action.error.message || '사용자 데이터를 불러오는데 실패했습니다.';
+        state.loading = false;
         Sentry.captureException(action.error);
       });
   },

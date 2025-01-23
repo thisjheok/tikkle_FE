@@ -54,6 +54,16 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
     }
   }
 
+  const isToday = (dateString: string) => {
+    const today = new Date()
+    const [year, month, day] = dateString.split('.')
+    return (
+      today.getFullYear() === parseInt(year) &&
+      today.getMonth() + 1 === parseInt(month) &&
+      today.getDate() === parseInt(day)
+    )
+  }
+
   return (
     <div 
       className="notice" 
@@ -62,7 +72,10 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
       <span className={`department ${notice.top ? 'notice-highlight' : ''}`}>
         {notice.top ? '[공지]' : notice.index}
       </span>
-      <span className="title">{notice.title}</span>
+      <span className="title">
+        {notice.title}
+        {isToday(notice.created_at) && <span className="new-badge">N</span>}
+      </span>
       <span className="date">{notice.created_at}</span>
       <img
         src={isBookmarked ? 'img/Star.svg' : 'img/Star-none.svg'}

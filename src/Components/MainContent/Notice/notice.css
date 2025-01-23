@@ -180,6 +180,14 @@
 .pagination span.disabled {
   opacity: 0.3;
 }
+
+.new-badge {
+  color: #FF5757;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
 @media (max-width: 1100px) {
   .Noticelist,
   .notice-all-container,

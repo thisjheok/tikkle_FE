@@ -143,6 +143,7 @@
 }
 .MyPage-Content {
   height: 670px;
+  width: 1000px;
   padding-left: 50px;
   padding-right: 50px;
   border-radius: 7.134px;
@@ -299,6 +300,7 @@
   }
   .MyPage-Content {
     height: 540px;
+    width: 840px;
     padding-left: 30px;
     padding-right: 30px;
   }
@@ -376,6 +378,7 @@
   }
   .MyPage-Content {
     height: 550px;
+    width: 850px;
   }
 }
 @media (max-height: 800px) {
@@ -434,6 +437,7 @@
   }
   .MyPage-Content {
     height: 430px;
+    width: 700px;
     padding-left: 20px;
     padding-right: 20px;
   }

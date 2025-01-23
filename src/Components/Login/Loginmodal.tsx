@@ -38,10 +38,26 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [imageSrc, setImageSrc] = React.useState('img/Login/data1.png');
 
   React.useEffect(() => {
+    // PNG 이미지 미리 로드
+    const pngImage = new Image();
+    pngImage.src = 'img/Login/data1.png';
+
+    // SVG 이미지 미리 로드
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = 'img/Login/data1.svg';
+    document.head.appendChild(link);
+
     const svgImage = new Image();
     svgImage.src = 'img/Login/data1.svg';
     svgImage.onload = () => {
       setImageSrc('img/Login/data1.svg');
+    };
+
+    // 클린업 함수
+    return () => {
+      document.head.removeChild(link);
     };
   }, []);
 
