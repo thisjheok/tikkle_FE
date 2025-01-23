@@ -35,6 +35,16 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onNaverLogin,
   onGoogleLogin,
 }) => {
+  const [imageSrc, setImageSrc] = React.useState('img/Login/data1.png');
+
+  React.useEffect(() => {
+    const svgImage = new Image();
+    svgImage.src = 'img/Login/data1.svg';
+    svgImage.onload = () => {
+      setImageSrc('img/Login/data1.svg');
+    };
+  }, []);
+
   const receiveAuthData = (authData: any) => {
     console.log('Received auth data in Home component:', authData)
   }
@@ -61,7 +71,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 펼쳐보세요
               </div>
             </div>
-            <img src="img/Login/data1.svg" />
+            <img src={imageSrc} alt="모래성 이미지" />
           </div>
         </motion.div>
         <div className="Login-right">
