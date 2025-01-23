@@ -1,13 +1,1 @@
-<svg width="38" height="39" viewBox="0 0 38 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g filter="url(#filter0_f_115_38)">
-<circle cx="19.0886" cy="19.4893" r="17.6433" fill="white"/>
-</g>
-<path d="M26.9993 14.8194C27.3535 14.4652 27.3535 13.8748 26.9993 13.5387L24.8739 11.4133C24.5378 11.059 23.9474 11.059 23.5931 11.4133L21.9218 13.0755L25.328 16.4816M10.9131 24.0933V27.4995H14.3193L24.3652 17.4445L20.959 14.0383L10.9131 24.0933Z" fill="#3C3F4F"/>
-<defs>
-<filter id="filter0_f_115_38" x="0.445312" y="0.845947" width="37.2861" height="37.2866" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-<feGaussianBlur stdDeviation="0.5" result="effect1_foregroundBlur_115_38"/>
-</filter>
-</defs>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="39" fill="none"><g filter="url(#a)"><circle cx="19.089" cy="19.489" r="17.643" fill="#fff"/></g><path fill="#3C3F4F" d="M27 14.82c.354-.355.354-.945 0-1.281l-2.126-2.126c-.336-.354-.927-.354-1.28 0l-1.672 1.662 3.406 3.407m-14.415 7.611V27.5h3.406l10.046-10.055-3.406-3.407z"/><defs><filter id="a" width="37.286" height="37.287" x=".445" y=".846" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1_foregroundBlur_115_38" stdDeviation=".5"/></filter></defs></svg>
