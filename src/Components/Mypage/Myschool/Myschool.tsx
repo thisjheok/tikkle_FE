@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Loading from '../../Loading';
 import { 
   fetchSchools, 
@@ -70,6 +71,10 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if(!selectedSchool || !selectedDepartment) {
+      toast.error('학교와 학과를 선택해주세요.');
+      return;   
+    }
     try {
       await dispatch(updateSchoolInfo({
         university: selectedSchool,
@@ -85,6 +90,20 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
       toast.error('학교 정보 업데이트에 실패했습니다.');
     }
   };
+  
+  const DeleteBtn = ({ index }: { index: number }) => {
+    return (
+      <img className="Myschool-text-Container-select-delete" src="/img/Mypage/MySchoolDeleteBtn.svg" alt="delete" 
+      onClick={() => handleDelete(index)}
+      />
+    )
+  }
+  
+  const handleDelete = (index: number) => {
+    const newSubscribeDepartments = [...subscribeDepartments];
+    newSubscribeDepartments[index] = '';
+    dispatch(setSubscribeDepartments(newSubscribeDepartments));
+  }
 
   if (loading) return <Loading type="mypage" />;
   if (error) return <div>에러: {error}</div>;
@@ -135,7 +154,8 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
           <div className="Myschool-Conatiner2">
             <div className="Myschool-text-Container">
               <label htmlFor="major">관심 사이트 1</label>
-                <select
+              <div className="Myschool-text-Container-select">
+              <select
                     id={`extra-department-${1}`}
                     value={subscribeDepartments[0]}
                     onChange={e =>
@@ -154,9 +174,16 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
                   </option>
                     ))}
                   </select>
+                  {
+                    subscribeDepartments[0] && (
+                      <DeleteBtn index={0} />
+                    )
+                  }
+              </div>
             </div>
             <div className="Myschool-text-Container">
               <label htmlFor="year">관심 사이트 2</label>
+              <div className="Myschool-text-Container-select">
               <select
                     id={`extra-department-${2}`}
                     value={subscribeDepartments[1]}
@@ -176,12 +203,19 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
                   </option>
                     ))}
                   </select>
+                  {
+                    subscribeDepartments[1] && (
+                      <DeleteBtn index={1} />
+                    )
+                  }
+              </div>
             </div>
           </div>
 
           <div className="Myschool-Conatiner2">
             <div className="Myschool-text-Container">
               <label htmlFor="major">관심 사이트 3</label>
+              <div className="Myschool-text-Container-select">
               <select
                     id={`extra-department-${3}`}
                     value={subscribeDepartments[2]}
@@ -201,9 +235,16 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
                   </option>
                     ))}
                   </select>
+                  {
+                    subscribeDepartments[2] && (
+                      <DeleteBtn index={2} />
+                    )
+                  }
+              </div>
             </div>
             <div className="Myschool-text-Container">
               <label htmlFor="year">관심 사이트 4</label>
+              <div className="Myschool-text-Container-select">
               <select
                     id={`extra-department-${4}`}
                     value={subscribeDepartments[3]}
@@ -223,6 +264,12 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
                   </option>
                     ))}
                   </select>
+                  {
+                    subscribeDepartments[3] && (
+                      <DeleteBtn index={3} />
+                    )
+                  }
+              </div>
             </div>
           </div>
 
@@ -237,6 +284,7 @@ const Myschool: React.FC<MySchoolProps> = ({ onClose }) => {
           </div>
         </form>
       </div>
+      <ToastContainer position="bottom-center" autoClose={3000} />
     </div>
   )
 }

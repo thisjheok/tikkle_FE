@@ -12,7 +12,7 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-top: 15px;
+  margin-top: 50px;
 }
 .History-title-num{
   font-size: 20px;
@@ -236,6 +236,13 @@
 .date-picker input[type='date']::-webkit-datetime-edit-day-field {
   display: inline;
 }
+
+@media (min-width: 1571px) and (min-height: 901px) {
+  .Mypage-selector {
+    margin-top: 30px;
+  }
+}
+
 @media (max-width: 1570px) and (min-height: 901px) {
   .History-Container {
     margin-top: 8px;

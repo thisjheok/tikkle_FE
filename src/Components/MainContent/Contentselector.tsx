@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Content.css'
 import Noticelist from './Notice/noticelist'
 import Noticemain from './Notice/noticemain'
@@ -11,7 +11,7 @@ import RecruitmentContainer from './Recruitment/recruitment'
 import Job from './job/job'
 import { UserData } from '../../api'
 import Mypageinfo from '../modal/Mypageinfomodal'
-
+import { getStorageData, setStorageData } from '../../util/storage'
 interface ContentSelectorProps {
   userData: UserData | null
 }
@@ -29,8 +29,56 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
   const [selectedJob, setSelectedJob] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      const savedDepartment = await getStorageData('selectedDepartment')
+      if (savedDepartment) {
+        setSelectedDepartment(savedDepartment)
+      } else {
+        setSelectedDepartment('전체공지')
+      }
+    }
+    fetchDepartment()
+  }, [])
+
+  useEffect(() => {
+    const fetchActiveTab = async () => {
+      const savedActiveTab = await getStorageData('activeTab')
+      if (savedActiveTab) {
+        setActiveTab(savedActiveTab)
+      } else {
+        setActiveTab('전체')
+      }
+    }
+    fetchActiveTab()
+  }, [])
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      const savedJob = await getStorageData('selectedJob')
+      const jobList = userData?.subscribe_saramin
+      if (savedJob) {
+        setSelectedJob(savedJob)
+      }else{
+        if (jobList && jobList.length > 0) {
+          setSelectedJob(jobList[0])
+        }
+      }
+    }
+    fetchJob()
+  }, [])
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const savedContent = await getStorageData('selectedContent')
+      if (savedContent) {
+        setSelectedNotice(savedContent)
+      }
+    }
+    fetchContent()
+  }, [])
+
   const handleTagListUpdate = (tags: string[]) => {
-    // setTagList(tags)
     setTabs(['전체', ...tags])
   }
 
@@ -38,8 +86,14 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
     setSearchTerm(term)
   }
 
-  const handleDepartmentSelect = (department: string) => {
+  const handleDepartmentSelect = async (department: string) => {
     setSelectedDepartment(department)
+    await setStorageData('selectedDepartment', department)
+  }
+  
+  const handleJobSelect = async (job: string) => {
+    setSelectedJob(job)
+    await setStorageData('selectedJob', job)
   }
 
   const renderContent = () => {
@@ -71,7 +125,7 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
           : []
         return (
           <>
-            <Job subscribeSaramin={jobList} onJobSelect={setSelectedJob} />
+            <Job subscribeSaramin={jobList} onJobSelect={handleJobSelect} />
             <SearchBox onSearch={handleSearch} />
             <RecruitmentContainer
               searchTerm={searchTerm}
@@ -98,7 +152,10 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
             className={`Content-Selector-sector ${
               selectedNotice === notice ? 'selected' : ''
             }`}
-            onClick={() => setSelectedNotice(notice)}
+            onClick={async () => {
+              setSelectedNotice(notice)
+              await setStorageData('selectedContent', notice)
+            }}
           >
             {notice}
           </div>
@@ -111,7 +168,10 @@ const ContentSelector: React.FC<ContentSelectorProps> = ({ userData }) => {
               <div
                 key={tab}
                 className={`tab ${activeTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab)}
+                onClick={async () => {
+                  setActiveTab(tab)
+                  await setStorageData('activeTab', tab)
+                }}
               >
                 {tab}
               </div>

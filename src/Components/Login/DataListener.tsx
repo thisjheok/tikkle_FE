@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-
+import {setStorageData} from '../../util/storage'
 interface AuthData {
   access_token: string
   refresh_token: string
@@ -18,10 +18,10 @@ const DataListener: React.FC<DataListenerProps> = ({ onReceiveAuthData }) => {
 
       // 모든 필수 프로퍼티가 존재하는지 확인
       if (isValidAuthData(authData)) {
-        localStorage.setItem('access_token', authData.access_token)
-        localStorage.setItem('refresh_token', authData.refresh_token)
-        localStorage.setItem('is_new', authData.is_new.toString())
-        console.log('Data saved to localStorage.')
+        setStorageData('access_token', authData.access_token)
+        setStorageData('refresh_token', authData.refresh_token)
+        setStorageData('is_new', authData.is_new.toString())
+        // console.log('Data saved to chromeStorage.')
 
         // 부모 컴포넌트로 인증 데이터 전달
         onReceiveAuthData(authData)

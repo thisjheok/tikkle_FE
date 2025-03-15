@@ -98,6 +98,23 @@
   cursor: pointer;
 }
 
+.button-save{
+  width: 132.796px;
+  height: 39.149px;
+  border-radius: 5px;
+  background: #E4EFFC;
+  border: none;
+  color: #6f6f6f;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: #6f6f6f;
+  cursor: pointer;
+}
+
 @media (max-width: 1570px) and (min-height: 901px) {
   .Recruit-All {
     margin-left: -1.7px;
@@ -231,6 +248,12 @@
     margin-top: 10px;
   }
   .button-1 {
+    width: 102.796px;
+    height: 30.149px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .button-save{
     width: 102.796px;
     height: 30.149px;
     font-size: 13px;

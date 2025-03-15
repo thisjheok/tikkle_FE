@@ -1,0 +1,158 @@
+.tikkeul-notice-container{
+    position: absolute;
+    top: 330px;
+    width: 1090px;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 9999;
+    margin: 0 auto;
+    right: 0;
+    left: 0;
+    pointer-events: none; /* 컨테이너 자체는 마우스 이벤트를 무시 */
+}
+.tikkeul-notice {  
+    pointer-events: auto; /* 실제 notice 창은 마우스 이벤트 허용 */
+    width: 444px;
+    height: 223px;
+    border-radius: 6px;
+    background: #FFF;
+    box-shadow: 0px 0px 20px 0px #C6C7C9;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;  
+}
+
+.tikkeul-notice-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.tikkeul-notice-header-title {
+    display: flex;
+    font-size: 25px;
+    font-weight: 700;
+    font-style: normal;
+    color: #505050;
+}
+
+.tikkeul-notice-header-close {
+    display: flex;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.tikkeul-notice-item{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    border-bottom: 1px solid #C6C7C9;
+    margin-bottom: 8px;
+}
+
+.tikkeul-notice-item-title{
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+.tikkeul-notice-item-title-important{
+    font-size: 14px;
+    font-weight: 500;
+    color: #F00;
+}
+.tikkeul-notice-item-title-text{
+    font-size: 14px;
+    font-weight: 500;
+    color: #505050;
+}
+
+.tikkeul-notice-item-new{
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    color: #F00;
+}
+
+.tikkeul-notice-item-date{
+    display: flex;
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 3px;
+}
+
+.tikkeul-notice-footer {
+    position: absolute;
+    bottom: 20px; /* 모달의 padding 값을 고려하여 하단에 고정 */
+    left: 20px;
+    right: 20px;
+    
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.tikkeul-notice-footer-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.tikkeul-notice-footer-button-text{
+    font-size: 13px;
+    font-weight: 400;
+    color: #505050;
+}
+
+/* 미디어 쿼리 수정 */
+@media (min-width: 1500px) {
+    .tikkeul-notice-container {
+        width: 1400px;  /* Search-Notice와 동일한 최대 너비 */
+    }
+}
+
+@media (max-width: 1100px) {
+    .tikkeul-notice-container {
+        width: 790px;   /* Search-Notice와 동일한 최소 너비 */
+    }
+}
+
+/* 콘텐츠 영역 높이 및 스크롤 처리 추가 */
+.tikkeul-notice-content-box {
+    width: 100%;
+    height: 120px; /* 모달 높이와 header/footer를 고려하여 적절히 조정 */
+    display: flex;
+    gap: 10px;
+    overflow: hidden; /* 내부 요소가 넘칠 경우 스크롤바를 통해 처리 */
+}
+
+.tikkeul-notice-contents-list {
+    flex: 1;
+    overflow-y: auto; /* 수직 스크롤 활성화 */
+    padding-right: 10px; /* 스크롤바 공간 확보 (필요시) */
+}
+
+/* 스크롤바 스타일링 */
+.tikkeul-notice-contents-list::-webkit-scrollbar {
+    width: 4px;  /* 더 얇은 스크롤바 */
+}
+
+.tikkeul-notice-contents-list::-webkit-scrollbar-track {
+    background: #EFEFF0;  /* 트랙 배경 투명하게 */
+}
+
+.tikkeul-notice-contents-list::-webkit-scrollbar-thumb {
+    background: #AAACAF;  /* 밝은 회색의 라인 */
+}
+
+.tikkeul-notice-contents-list::-webkit-scrollbar-thumb:hover {
+    background: #949698;  /* 호버 시 약간 진한 회색 */
+}

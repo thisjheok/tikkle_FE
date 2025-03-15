@@ -12,6 +12,7 @@
   flex-shrink: 0;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.57);
+  margin-left: 20px;
 }
 .Content-Selector-sector {
   display: flex;
@@ -48,6 +49,7 @@
   font-size: 16px;
   width: 1090px;
   flex-wrap: wrap;
+  margin-left: 20px;
 }
 .Contents {
   transition: opacity 0.3s ease-out;

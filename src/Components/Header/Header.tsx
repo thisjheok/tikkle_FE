@@ -80,13 +80,13 @@ const Header: React.FC<HeaderProps> = ({ userData }) => {
 
   const IntroLink = () => {
     window.open(
-      'https://campusnow.notion.site/ccc5e7ddd888426387eac41537ca58b3',
+      'https://tikkeul-service.notion.site/ccc5e7ddd888426387eac41537ca58b3',
       '_blank'
     )
   }
 
   // useEffect(() => {
-  //   const accessToken = localStorage.getItem('access_token')
+  //   const accessToken = chrome.storage.local.get('access_token')
   //   if (accessToken) {
   //     setIsAuthTokenPresent(true)
   //     // console.log(accessToken)

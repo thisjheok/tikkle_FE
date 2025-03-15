@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import RecruitmentCard from './recruitmentCard'
+import useRecruitmentStore from './recruitStore'
 import { fetchRecruitments, toggleBookmark2 } from '../../../api'
 import './recruitment.css'
 import { Recruitment } from '../../../store/Rec'
@@ -22,12 +23,30 @@ const RecruitmentContainer: React.FC<RecruitmentContainerProps> = ({
   const prevPageRef = useRef<number>(1)
   const prevSearchTermRef = useRef<string>('')
   const prevSelectedJobRef = useRef<string | null>(null)
+  const { recruitments: cachedRecruitments, updateCache, shouldFetchNewData } = useRecruitmentStore()
+  
   const loadRecruitments = useCallback(async () => {
-    if (isLoading || !hasMore || (page !== 1 && page === prevPageRef.current)) {
+    if (isLoading || !hasMore) {
       return
     }
 
+    setIsLoading(true)
+
     try {
+      if (
+        page === prevPageRef.current &&
+        searchTerm === prevSearchTermRef.current &&
+        selectedJob === prevSelectedJobRef.current
+      ) {
+        return
+      }
+
+      if (page === 1 && !shouldFetchNewData(searchTerm, selectedJob)) {
+        setRecruitments(cachedRecruitments)
+        setHasMore(true)
+        return
+      }
+
       console.log('Fetching recruitments for page:', page)
       const data = await fetchRecruitments(
         15,
@@ -36,11 +55,19 @@ const RecruitmentContainer: React.FC<RecruitmentContainerProps> = ({
         searchTerm
       )
 
-      if (data.length === 0) {
+      if (data.length === 0 || data.length < 15) {
         setHasMore(false)
+      } else {
+        setHasMore(true)
+      }
+
+      if (page === 1) {
+        setRecruitments(data)
+        updateCache(data, searchTerm, selectedJob, page, data.length === 15)
       } else {
         setRecruitments(prevRecruitments => [...prevRecruitments, ...data])
       }
+      
       prevPageRef.current = page
       prevSearchTermRef.current = searchTerm
       prevSelectedJobRef.current = selectedJob
@@ -51,7 +78,7 @@ const RecruitmentContainer: React.FC<RecruitmentContainerProps> = ({
     } finally {
       setIsLoading(false)
     }
-  }, [isLoading, hasMore, page, searchTerm, selectedJob])
+  }, [isLoading, hasMore, page, searchTerm, selectedJob, cachedRecruitments, shouldFetchNewData, updateCache])
 
   useEffect(() => {
     if (
@@ -70,7 +97,7 @@ const RecruitmentContainer: React.FC<RecruitmentContainerProps> = ({
     if (!containerRef.current || isLoading || !hasMore) return
 
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current
-    if (scrollTop + clientHeight >= scrollHeight) {
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
       setPage(prevPage => prevPage + 1)
     }
   }, [isLoading, hasMore])
@@ -123,7 +150,7 @@ const RecruitmentContainer: React.FC<RecruitmentContainerProps> = ({
           url={recruitment.url}
         />
       ))}
-      {isLoading && <Loading/>}
+      {isLoading && <Loading type="recruitment" />}
       {error && <p>{error}</p>}
       {!hasMore && <p>모든 채용 정보를 불러왔습니다.</p>}
     </div>

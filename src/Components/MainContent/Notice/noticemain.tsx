@@ -138,7 +138,11 @@ const Noticemain: React.FC<NoticemainProps> = ({
   }, [containerRef, isLoading, hasMore])
 
   if (isLoading && notices.length === 0) {
-    return <Loading/>
+    return (
+      <div className="notice-all-container">
+        <Loading type='notice' />
+      </div>
+    )
   }
 
   if (error) {

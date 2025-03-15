@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from '../modal/modal'
 import { motion } from 'framer-motion'
 import './Login.css'
 import DataListener from './DataListener'
-
+import { getStorageData } from '../../util/storage'
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
@@ -36,6 +36,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onGoogleLogin,
 }) => {
   const [imageSrc, setImageSrc] = React.useState('img/Login/data1.png');
+  const [lastLoginType, setLastLoginType] = useState<string | null>(null);
 
   React.useEffect(() => {
     // PNG 이미지 미리 로드
@@ -59,6 +60,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
     return () => {
       document.head.removeChild(link);
     };
+  }, []);
+
+  useEffect(() => {
+    const getLoginType = async () => {
+      const loginType = await getStorageData('last_login_type');
+      setLastLoginType(loginType);
+    };
+    getLoginType();
   }, []);
 
   const receiveAuthData = (authData: any) => {
@@ -103,19 +112,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
           <div className="Login-social-button">
             <motion.div variants={item} onClick={onGoogleLogin} className="login-button-wrapper">
               <div className="Login-google">구글 로그인</div>
-              {localStorage.getItem('last_login_type') === 'google' && (
+              {lastLoginType === 'google' && (
                 <span className="last-login-badge">최근 로그인</span>
               )}
             </motion.div>
             <motion.div variants={item} onClick={onNaverLogin} className="login-button-wrapper">
               <div className="Login-naver">네이버 로그인</div>
-              {localStorage.getItem('last_login_type') === 'naver' && (
+              {lastLoginType === 'naver' && (
                 <span className="last-login-badge">최근 로그인</span>
               )}
             </motion.div>
             <motion.div variants={item} onClick={onKakaoLogin} className="login-button-wrapper">
               <div className="Login-kakao">카카오 로그인</div>
-              {localStorage.getItem('last_login_type') === 'kakao' && (
+              {lastLoginType === 'kakao' && (
                 <span className="last-login-badge">최근 로그인</span>
               )}
             </motion.div>

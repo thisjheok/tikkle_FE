@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
   "name": "티끌 Tikkeul NewTab",
-  "version": "1.1.0",
+  "version": "1.3.2",
   "description": "",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
   "icons": {
     "128": "/img/Logo/extension_icon.png"
-  }
+  },
+  "permissions":[
+    "storage",
+    "search"
+  ]
 }

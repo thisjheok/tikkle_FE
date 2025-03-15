@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './Mypagemodal.css'
 import {deleteUser} from '../../../api'
 import * as Sentry from '@sentry/react';
+import {removeStorageData } from '../../../util/storage'
 const Getout: React.FC = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false)
 
@@ -9,9 +10,9 @@ const Getout: React.FC = () => {
     setShowConfirmModal(true)
   }
   const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('is_new')
-    localStorage.removeItem('refresh_token')
+    removeStorageData('access_token')
+    removeStorageData('is_new')
+    removeStorageData('refresh_token')
     window.location.reload()
   }
 

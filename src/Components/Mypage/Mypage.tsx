@@ -10,7 +10,7 @@ import DoLogin from './DoLogin'
 import Loading from '../Loading'
 import { getUserData, UserData } from '../../api'
 import * as Sentry from '@sentry/react';
-
+import { getStorageData, removeStorageData } from '../../util/storage'
 interface MyPageModalProps {
   isOpen: boolean
   onClose: () => void
@@ -99,8 +99,8 @@ const MyPageModal: React.FC<MyPageModalProps> = ({
     }
     checkLoginStatus()
   }, [initialSelectedIndex])
-  const checkLoginStatus = () => {
-    const token = localStorage.getItem('access_token')
+  const checkLoginStatus = async () => {
+    const token = await getStorageData('access_token')
     setIsLoggedIn(!!token)
   }
   const selectedData =
@@ -136,9 +136,9 @@ const MyPageModal: React.FC<MyPageModalProps> = ({
     openLoginModal()
   }
   const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('is_new')
-    localStorage.removeItem('refresh_token')
+    removeStorageData('access_token')
+    removeStorageData('is_new')
+    removeStorageData('refresh_token')
     setIsLoggedIn(false)
     onClose()
     window.location.reload()

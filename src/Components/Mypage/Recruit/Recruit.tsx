@@ -145,7 +145,7 @@ const Recruit: React.FC<RecruitProps> = ({ onClose }) => {
             관심있는 학과를 선택해 공지사항을 확인해보세요!
           </p> */}
           <div className="buttons-1">
-            <button className="button-save" type="submit" onClick={onClose}>
+            <button className="button-save" type="submit">
               저장
             </button>
             <button className="button-1" type="button" onClick={onClose}>

@@ -11,7 +11,6 @@ interface RecruitmentState {
   searchTerm: string
   selectedJob: string | null
   setRecruitments: (recruitments: Recruitment[]) => void
-  appendRecruitments: (newRecruitments: Recruitment[]) => void
   updateCache: (
     recruitments: Recruitment[], 
     search: string, 
@@ -20,9 +19,6 @@ interface RecruitmentState {
     hasMoreItems: boolean
   ) => void
   shouldFetchNewData: (search: string, job: string | null) => boolean
-  updateBookmark: (id: string, isBookmarked: boolean) => void
-  setPage: (page: number) => void
-  setHasMore: (hasMore: boolean) => void
 }
 
 const useRecruitmentStore = create<RecruitmentState>()(
@@ -38,17 +34,13 @@ const useRecruitmentStore = create<RecruitmentState>()(
       
       setRecruitments: (recruitments) => set({ recruitments }),
       
-      appendRecruitments: (newRecruitments) => set(state => ({
-        recruitments: [...state.recruitments, ...newRecruitments]
-      })),
-      
       updateCache: (recruitments, search, job, currentPage, hasMoreItems) => set({
         recruitments,
         lastFetched: Date.now(),
         searchTerm: search,
         selectedJob: job,
         page: currentPage,
-        hasMore: hasMoreItems
+        hasMore: hasMoreItems,
       }),
       
       shouldFetchNewData: (search, job) => {
@@ -60,17 +52,6 @@ const useRecruitmentStore = create<RecruitmentState>()(
                search !== state.searchTerm ||
                job !== state.selectedJob
       },
-
-      updateBookmark: (id, isBookmarked) => set(state => ({
-        recruitments: state.recruitments.map(recruitment =>
-          recruitment.id === id
-            ? { ...recruitment, bookmark: isBookmarked }
-            : recruitment
-        )
-      })),
-
-      setPage: (page) => set({ page }),
-      setHasMore: (hasMore) => set({ hasMore }),
     }),
     {
       name: 'Recruitment Store'

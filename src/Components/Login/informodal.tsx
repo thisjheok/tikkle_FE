@@ -12,7 +12,7 @@ import {
 } from '../../api'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
+import { getStorageData, setStorageData} from '../../util/storage'
 interface InfoModalProps {
   isOpen: boolean
   onClose: () => void
@@ -67,7 +67,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
     { field: '', subField: '' },
   ])
   const [tags, setTags] = useState<Record<string, string[]>>({})
-  const accessToken = localStorage.getItem('access_token');
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await getStorageData('access_token')
+      setAccessToken(token)
+    }
+    getToken()
+  }, [])
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -256,7 +264,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
     console.log(userData);
     try {
       await postUserData(userData)
-      localStorage.setItem('is_new', 'false')
+      setStorageData('is_new', 'false')
       toast.success('사용자 정보가 성공적으로 등록되었습니다.')
       onSubmit()
       onClose()
@@ -411,7 +419,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
               />
               <label htmlFor="chk3"></label>
               <label htmlFor="chk3">개인정보 수집 및 이용동의 (필수)</label>
-              <label className='checkPolicy' onClick={() => window.open('https://campusnow.notion.site/aeaefffa24cd48eca005c0fb71b9358c', '_blank')}>약관 보기</label>
+              <label className='checkPolicy' onClick={() => window.open('https://tikkeul-service.notion.site/aeaefffa24cd48eca005c0fb71b9358c?pvs=4', '_blank')}>약관 보기</label>
             </div>
             {/* <div className="term-item">
               <input

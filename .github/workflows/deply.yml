@@ -1,0 +1,54 @@
+name: Deploy Chrome Extension
+
+on:
+  push:
+    branches: [ "main" ]  # main에 push할 때만 동작 예시
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 리포지토리 코드 체크아웃
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # 2) Node.js 환경 설정
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3) 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4) 빌드 (Vite 사용)
+      - name: Build extension
+        run: npm run build
+
+      # 5) dist 폴더를 압축 (extension.zip)
+      - name: Zip extension
+        run: zip -r extension.zip dist
+
+      # 6) 크롬 웹스토어에 업로드 및 퍼블리시
+      - name: Publish to Chrome Web Store
+        run: |
+          npx chrome-webstore-upload upload \
+            --extension-id $EXTENSION_ID \
+            --client-id $CLIENT_ID \
+            --client-secret $CLIENT_SECRET \
+            --refresh-token $REFRESH_TOKEN \
+            --source extension.zip
+
+          # 업로드만 하고 끝낼 수도 있으나, 자동 퍼블리시까지 원하면 다음 추가
+          npx chrome-webstore-upload publish \
+            --extension-id $EXTENSION_ID \
+            --client-id $CLIENT_ID \
+            --client-secret $CLIENT_SECRET \
+            --refresh-token $REFRESH_TOKEN
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}

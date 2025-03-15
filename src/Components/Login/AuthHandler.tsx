@@ -12,7 +12,7 @@ import { postgoogleAuth, postsign } from '../../api'
 import LoginButton from './Loginbutton'
 import DataListener from './DataListener'
 import Loading from '../Loading'
-
+import { getStorageData, setStorageData, removeStorageData } from '../../util/storage'
 const LoginModal = lazy(() => import('./Loginmodal'))
 const InfoModal = lazy(() => import('../Login/informodal'))
 
@@ -35,16 +35,22 @@ const AuthHandler: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token')
-    if (token) {
-      setIsLoggedIn(true)
-    } else {
-      setIsLoggedIn(false)
-      setIsModalOpen(true) 
+    const checkToken = async () => {
+      const token = await getStorageData('access_token');
+      if (token) {
+        setIsLoggedIn(true)
+      } else {
+        setIsLoggedIn(false)
+        setIsModalOpen(true) 
+      }
     }
-    const inNewValue = localStorage.getItem('is_new') === 'true'
-    if (inNewValue) openInfoModal()
-    console.log(isLoggedIn)
+    const checkIsNew = async () => {
+      const is_new = await getStorageData('is_new');
+      if (is_new === 'true') openInfoModal();
+    }
+    checkToken();
+    checkIsNew();
+    console.log(isLoggedIn);
   }, [])
 
   useEffect(() => {
@@ -103,19 +109,19 @@ const AuthHandler: React.FC = () => {
   }
 
   const handleKakaoLogin = () => {
-    localStorage.setItem('last_login_type', 'kakao')
+    setStorageData('last_login_type', 'kakao')
     dispatch(kakaoLogin())
     closeModal()
   }
 
   const handleNaverLogin = () => {
-    localStorage.setItem('last_login_type', 'naver')
+    setStorageData('last_login_type', 'naver')
     dispatch(naverLogin())
     closeModal()
   }
 
   const handleGoogleLogin = () => {
-    localStorage.setItem('last_login_type', 'google')
+    setStorageData('last_login_type', 'google')
     dispatch(googleLogin())
     closeModal()
   }
@@ -135,9 +141,9 @@ const AuthHandler: React.FC = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('is_new')
-    localStorage.removeItem('refresh_token')
+    removeStorageData('access_token')
+    removeStorageData('is_new')
+    removeStorageData('refresh_token')
     setIsLoggedIn(false)
     window.location.reload()
   }

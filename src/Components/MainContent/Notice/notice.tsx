@@ -69,8 +69,8 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
       className="notice" 
       onClick={handleNoticeClick}
     >
-      <span className={`department ${notice.top ? 'notice-highlight' : ''}`}>
-        {notice.top ? '[공지]' : notice.index}
+      <span className={`department ${notice.top ? 'notice-highlight' : 'notice-index'}`}>
+        <div className='department-text'>{notice.top ? '[공지]' : notice.index}</div>
       </span>
       <span className="title">
         {notice.title}

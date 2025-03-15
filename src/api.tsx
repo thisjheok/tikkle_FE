@@ -3,7 +3,9 @@ import GoogleAuthBody from './store/slices/authslice'
 import qs from 'qs'
 import { Recruitment } from './store/Rec'
 import * as Sentry from '@sentry/react';
-const BASE_URL = 'https://api.tikkeul.site'
+import { API_URL } from './store/slices/constant'
+import { getStorageData, setStorageData, removeStorageData } from './util/storage'
+const BASE_URL = API_URL
 
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}`,
@@ -43,20 +45,20 @@ const refreshAccessToken = async (
   return response.data
 }
 
-// 요청 인터셉터 추가: 액세스 토큰을 요청 헤더에 첨부
+// 요청 인터셉터 수정
 axiosInstance.interceptors.request.use(
-  config => {
-    const accessToken = localStorage.getItem('access_token')
+  async (config) => {
+    const accessToken = await getStorageData('access_token');
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    return config
+    return config;
   },
   error => {
     Sentry.captureException(error);
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 let isRefreshing = false; // refresh를 모든 곳에서 동시에 진행하지 못하도록 막음
 let refreshSubscribers: ((token: string) => void)[] = []; // refresh가 막혀있을 때 해당 부분으로 들어감
@@ -72,6 +74,7 @@ const addRefreshSubscriber = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback);
 };
 
+// 응답 인터셉터 내부의 스토리지 관련 코드 수정
 axiosInstance.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
@@ -79,15 +82,10 @@ axiosInstance.interceptors.response.use(
 
     if ((error.response?.status === 401 || error.response?.status === 403) && originalRequest && !originalRequest._retry) {
       if (isRefreshing) {
-        // Promise를 반환하여 토큰이 갱신될 때까지 대기
         return new Promise((resolve) => {
-          //현재 요청을 대기열(refreshSubscribers)에 추가
           addRefreshSubscriber(async (token: string) => {  
-            // 새 토큰이 localStorage에 완전히 저장될 때까지 대기
-            await new Promise(resolve => setTimeout(resolve, 100));  // 토큰 저장 짧은 지연 추가
-            //새 토큰으로 헤더 업데이트
+            await new Promise(resolve => setTimeout(resolve, 100));
             originalRequest.headers.Authorization = `Bearer ${token}`;
-            // 원래 요청 재시도
             resolve(axiosInstance(originalRequest));
           });
         });
@@ -97,22 +95,22 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true; // refresh 진행 선점
 
       try {
-        const refreshToken = localStorage.getItem('refresh_token')
+        const refreshToken = await getStorageData('refresh_token');
         if (!refreshToken) {
-          throw new Error('리프레시 토큰이 없습니다')
+          throw new Error('리프레시 토큰이 없습니다');
         }
 
         // 새로운 액세스 토큰과 리프레시 토큰 요청
         const { access_token: newAccessToken, refresh_token: newRefreshToken } =
-          await refreshAccessToken(refreshToken)
+          await refreshAccessToken(refreshToken);
 
-        // localStorage 업데이트를 기다림
+        // chromeStorage 업데이트를 기다림
         await Promise.all([
-          localStorage.setItem('access_token', newAccessToken),
-          localStorage.setItem('refresh_token', newRefreshToken)
+          setStorageData('access_token', newAccessToken),
+          setStorageData('refresh_token', newRefreshToken)
         ]);
 
-        // 짧은 지연 추가하여 localStorage 업데이트 완료 보장
+        // 짧은 지연 추가하여 chromeStorage 업데이트 완료 보장
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // 원래 요청의 Authorization 헤더 업데이트
@@ -128,18 +126,21 @@ axiosInstance.interceptors.response.use(
         refreshSubscribers = []; // 대기 중인 요청들도 초기화
         
         Sentry.captureException(refreshError);
-        console.error('토큰 갱신 오류:', refreshError)
-        // 토큰 갱신 실패 시 추가 처리 (예: 사용자 로그아웃)
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        localStorage.removeItem("is_new");
-        return Promise.reject(refreshError)
+        console.error('토큰 갱신 오류:', refreshError);
+        
+        await Promise.all([
+          removeStorageData('access_token'),
+          removeStorageData('refresh_token'),
+          removeStorageData('is_new')
+        ]);
+        
+        return Promise.reject(refreshError);
       }
     }
     Sentry.captureException(error);
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 export default axiosInstance
 export function postsign(code: string, provider: string) {
@@ -200,21 +201,6 @@ export const postgoogleAuth = (googleAuthData: GoogleAuthBody) => {
       throw error
     })
 }
-
-axiosInstance.interceptors.request.use(
-  request => {
-    const accessToken = localStorage.getItem('access_token')
-    // console.log(accessToken)
-    if (accessToken) {
-      request.headers.Authorization = `Bearer ${accessToken}`
-    }
-    return request
-  },
-  error => {
-    Sentry.captureException(error);
-    return Promise.reject(error)
-  }
-)
 
 export const postUserData = async (userData: {
   name: string
@@ -637,6 +623,63 @@ export const deleteUser = async (): Promise<void> => {
     } else {
       console.error('예상치 못한 오류:', error);
     }
+    throw error;
+  }
+};
+
+interface BookmarkUpdate {
+  uri: string
+  title: string
+  state: boolean
+}
+
+export const updateBookmark = async (bookmark: BookmarkUpdate) => {
+  try {
+    // console.log('북마크 업데이트 요청:', bookmark)
+    
+    const response = await axiosInstance.post('/user/bookmark', {
+      uri: bookmark.uri,
+      title: bookmark.title,
+      state: bookmark.state
+    })
+    
+    // console.log('북마크 업데이트 성공:', response.data)
+    return response
+  } catch (error: any) {
+    if (error.response?.status === 409) {
+      console.log('409 에러 상세 정보:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        message: error.message
+      })
+    
+      return { 
+        status: 409, 
+        data: error.response.data 
+      }
+    }
+    console.error('북마크 업데이트 실패:', error.response?.data || error.message)
+    Sentry.captureException(error)
+    throw error
+  }
+}
+
+export interface TikkeulNotice {
+  title: string;
+  timestamp: string;
+  url: string;
+  univ: string;
+  isimportant: boolean;
+}
+
+export const getTikkeulNotice = async (): Promise<TikkeulNotice[]> => {
+  try {
+    const response = await axiosInstance.get<TikkeulNotice[]>('/tikkeul');
+    return response.data;
+  } catch (error) {
+    Sentry.captureException(error);
+    console.error('Error fetching tikkeul notices:', error);
     throw error;
   }
 };
