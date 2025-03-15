@@ -6,7 +6,7 @@ const handleClick = (url: string) => {
     }
 }
 
-const TikkeulNoticeItem = (data: {title: string, date: string,url:string, isimportant: boolean}) => {
+const TikkeulNoticeItem = (data: {title: string, date: string,url:string, is_important: boolean}) => {
     const date = new Date(data.date);
     const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     
@@ -14,7 +14,7 @@ const TikkeulNoticeItem = (data: {title: string, date: string,url:string, isimpo
         <div className="tikkeul-notice-item" onClick={() => handleClick(data.url)}> 
             <div className="tikkeul-notice-item-title">
                 {
-                    data.isimportant && (
+                    data.is_important && (
                         <div className='tikkeul-notice-item-title-important'>
                             [중요]
                         </div>

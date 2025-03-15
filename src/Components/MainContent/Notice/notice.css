@@ -116,12 +116,24 @@
   flex: 2.5;
   padding: 30px;
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   contain: content;
   will-change: transform;
   transform: translateZ(0);
+  overflow: hidden;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 30px);
 }
 
 .date {

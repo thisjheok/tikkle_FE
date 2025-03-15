@@ -99,6 +99,24 @@ const MyPageModal: React.FC<MyPageModalProps> = ({
     }
     checkLoginStatus()
   }, [initialSelectedIndex])
+  
+  // ESC 키 이벤트 핸들러 추가
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener('keydown', handleKeyDown);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+  
   const checkLoginStatus = async () => {
     const token = await getStorageData('access_token')
     setIsLoggedIn(!!token)

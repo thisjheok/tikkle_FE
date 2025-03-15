@@ -670,7 +670,7 @@ export interface TikkeulNotice {
   timestamp: string;
   url: string;
   univ: string;
-  isimportant: boolean;
+  is_important: boolean;
 }
 
 export const getTikkeulNotice = async (): Promise<TikkeulNotice[]> => {

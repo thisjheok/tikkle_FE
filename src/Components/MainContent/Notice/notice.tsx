@@ -72,10 +72,12 @@ const Notice: React.FC<NoticeProps> = ({ notice, onBookmarkUpdate }) => {
       <span className={`department ${notice.top ? 'notice-highlight' : 'notice-index'}`}>
         <div className='department-text'>{notice.top ? '[공지]' : notice.index}</div>
       </span>
-      <span className="title">
-        {notice.title}
-        {isToday(notice.created_at) && <span className="new-badge">N</span>}
-      </span>
+      <div className="title">
+        <div className='title-container'>
+          <span className='title-text'>{notice.title}</span>
+          {isToday(notice.created_at) && <span className="new-badge">N</span>}
+        </div>
+      </div>
       <span className="date">{notice.created_at}</span>
       <img
         src={isBookmarked ? 'img/Star.svg' : 'img/Star-none.svg'}

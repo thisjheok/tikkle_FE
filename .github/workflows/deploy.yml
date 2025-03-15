@@ -1,0 +1,28 @@
+name: Npm Build
+
+on:
+  push:
+    branches: [ "main" ]  # main에 push할 때만 동작 예시
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 리포지토리 코드 체크아웃
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # 2) Node.js 환경 설정
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3) 의존성 설치
+      - name: Install dependencies
+        run: npm install
+
+      # 4) 빌드 (Vite 사용)
+      - name: Build extension
+        run: npm run build
