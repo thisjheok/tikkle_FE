@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
-import Modal from '../Modal/modal'
+import Modal from '../modal/modal'
 import { motion } from 'framer-motion'
 import './Mypage.css'
 import History from './Components/History/History'
@@ -68,8 +68,8 @@ const selecterData = [
   },
 ]
 
-const Mypageinfo = lazy(() => import('../Modal/MyPageInfoModal/Mypageinfomodal'))
-const LoginModal2 = lazy(() => import('../Modal/LoginModal/Loginmodal2'))
+const Mypageinfo = lazy(() => import('../modal/MyPageInfoModal/Mypageinfomodal'))
+const LoginModal2 = lazy(() => import('../modal/LoginModal/Loginmodal2'))
 
 const MyPageModal: React.FC<MyPageModalProps> = ({
   isOpen,

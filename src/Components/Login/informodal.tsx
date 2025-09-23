@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Modal from '../Modal/modal'
+import Modal from '../modal/modal'
 import { motion } from 'framer-motion'
 import './Login.css'
 import * as Sentry from '@sentry/react';
