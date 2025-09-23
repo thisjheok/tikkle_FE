@@ -1,0 +1,14 @@
+.LoginTake {
+  width: 500px;
+}
+
+.LoginModal-contetnt {
+  width: 535.544px;
+  height: 320.117px;
+  border-radius: 10.541px;
+  background: var(--white, #fff);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

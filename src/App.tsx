@@ -1,7 +1,7 @@
 import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import Home from './Pages/Home'
 import { useState, useEffect } from 'react'
-import Loading from './Components/Loading'
+import Loading from './Components/Loading/Loading'
 import './App.css'
 import { ThemeProvider } from './assets/Theme/ThemeContext'
 

@@ -77,7 +77,7 @@ export const fetchDepartments2 = createAsyncThunk(
 export const updateSchoolInfo = createAsyncThunk(
   'school/updateSchoolInfo',
   async (data: {
-    university: string;
+    // university: string;
     department: string;
     subscribe_notices: string[];
   }) => {

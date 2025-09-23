@@ -108,6 +108,10 @@
   cursor: pointer;
 }
 
+.day.first-row {
+  border-top: none;
+}
+
 .day.today {
   background-color: #3c332b;
   color: #fff;

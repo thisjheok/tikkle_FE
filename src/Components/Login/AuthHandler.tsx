@@ -11,7 +11,7 @@ import { RootState } from '../../store/store'
 import { postgoogleAuth, postsign } from '../../api'
 import LoginButton from './Loginbutton'
 import DataListener from './DataListener'
-import Loading from '../Loading'
+import Loading from '../Loading/Loading'
 import { getStorageData, setStorageData, removeStorageData } from '../../util/storage'
 const LoginModal = lazy(() => import('./Loginmodal'))
 const InfoModal = lazy(() => import('../Login/informodal'))

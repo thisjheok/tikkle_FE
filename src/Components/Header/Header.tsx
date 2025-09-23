@@ -1,7 +1,7 @@
 import React, { useState, Suspense, lazy } from 'react'
 import './Header.css'
 import AuthHandler from '../Login/AuthHandler'
-import Loading from '../Loading'
+import Loading from '../Loading/Loading'
 const MyPageModal = lazy(() => import('../Mypage/Mypage'))
 // import { KAKAO_SDK_ID } from '../../store/slices/constant'
 import { UserData } from '../../api'

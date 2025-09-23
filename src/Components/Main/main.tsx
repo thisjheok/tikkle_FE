@@ -3,7 +3,7 @@ import MainContainer from './maincontainer'
 import './main.css'
 import Calendar from '../Calendar/calendar'
 import Schedule from '../Schedule/schedule'
-import ContentSelector from '../MainContent/Contentselector'
+import ContentSelector from '../MainContent/Container/Contentselector'
 import { UserData } from '../../api'
 
 interface MainProps {

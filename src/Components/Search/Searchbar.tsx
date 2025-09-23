@@ -5,8 +5,8 @@ import '../../App.css'
 import { UserData } from '../../api'
 import { updateBookmark } from '../../api'
 import * as Sentry from '@sentry/react'
-import Bell from './Bell'
-import Loading from '../Loading'
+import Bell from '../Bell/Bell'
+import Loading from '../Loading/Loading'
 
 // Modal을 lazy loading으로 변경
 const Modal = lazy(() => import('../modal/modal'))

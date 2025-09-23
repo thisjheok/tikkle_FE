@@ -1,0 +1,32 @@
+.DoLogin_img {
+  width: 700px;
+}
+
+.DoLogin {
+  width: 1010.1px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 20px;
+}
+
+@media (max-width: 1570px) and (min-height: 901px) {
+  .DoLogin {
+    margin-left: -1.7px;
+    width: 823.8px;
+  }
+}
+@media (max-height: 900px) {
+  .DoLogin {
+    margin-left: -1.7px;
+    width: 823.8px;
+  }
+}
+@media (max-height: 800px) {
+  .DoLogin {
+    margin-left: -1.7px;
+    width: 694px;
+  }
+}

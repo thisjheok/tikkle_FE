@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import Modal from '../modal/modal'
+import Modal from '../Modal/modal'
 import { motion } from 'framer-motion'
 import './Login.css'
 import * as Sentry from '@sentry/react';
 import {
   postUserData,
   getNoticeDepartment,
-  getNoticeSite,
   getNoticeDepartment2,
   getSaraminTags
 } from '../../api'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { getStorageData, setStorageData} from '../../util/storage'
+// import { getStorageData, setStorageData} from '../../util/storage'
 interface InfoModalProps {
   isOpen: boolean
   onClose: () => void
@@ -50,9 +49,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
 }) => {
   const [step, setStep] = useState(1)
   const [name, setName] = useState('')
-  const [school, setSchool] = useState('')
   const [department, setDepartment] = useState('')
-  const [schools, setSchools] = useState<string[]>([])
   const [departments, setDepartments] = useState<string[]>([])
   const [departments2, setDepartments2] = useState<string[]>([])
   const [subscribeDepartments, setSubscribeDepartments] = useState<string[]>(['', '', ''])
@@ -67,31 +64,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
     { field: '', subField: '' },
   ])
   const [tags, setTags] = useState<Record<string, string[]>>({})
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  // const [accessToken, setAccessToken] = useState<string | null>(null)
 
-  useEffect(() => {
-    const getToken = async () => {
-      const token = await getStorageData('access_token')
-      setAccessToken(token)
-    }
-    getToken()
-  }, [])
-
-  useEffect(() => {
-    const fetchSchools = async () => {
-      if (step === 1 && schools.length === 0 && accessToken) {
-        try {
-          const schoolOptions: string[] = await getNoticeSite()
-          setSchools(schoolOptions)
-        } catch (error) {
-          Sentry.captureException(error);
-          console.error('Error fetching schools:', error)
-        }
-      }
-    }
-
-    fetchSchools()
-  }, [step, accessToken])
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     const token = await getStorageData('access_token')
+  //     // setAccessToken(token)
+  //   }
+  //   getToken()
+  // }, [])
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -111,40 +92,30 @@ const InfoModal: React.FC<InfoModalProps> = ({
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      if (school) {
-        try {
-          const departmentOptions: string[] = await getNoticeDepartment(school)
-          setDepartments(departmentOptions)
-        } catch (error) {
-          console.error('Error fetching departments:', error)
-          // toast.error('학과 정보를 불러오는데 실패했습니다.')
-        }
-      } else {
-        setDepartments([])
+      try {
+        const departmentOptions: string[] = await getNoticeDepartment('인하대학교')
+        setDepartments(departmentOptions)
+      } catch (error) {
+        console.error('Error fetching departments:', error)
       }
     }
 
     fetchDepartments()
-  }, [school])
+  }, [])
 
   useEffect(() => {
     const fetchDepartments2 = async () => {
-      if (school) {
-        try {
-          const departmentOptions2: string[] = await getNoticeDepartment2(school)
-          setDepartments2(departmentOptions2)
-        } catch (error) {
-          Sentry.captureException(error);
-          console.error('Error fetching departments:', error)
-          // toast.error('관심 학과 정보를 불러오는데 실패했습니다.')
-        }
-      } else {
-        setDepartments2([])
+      try {
+        const departmentOptions2: string[] = await getNoticeDepartment2('인하대학교')
+        setDepartments2(departmentOptions2)
+      } catch (error) {
+        Sentry.captureException(error);
+        console.error('Error fetching departments:', error)
       }
     }
 
     fetchDepartments2()
-  }, [school])
+  }, [])
 
 
   const handleSubscribeDepartmentChange = (index: number, value: string) => {
@@ -188,7 +159,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
   }
 
   const validateStep1 = () => {
-    if (!name || !school || !department) {
+    if (!name || !department) {
       toast.error('모든 필수 항목을 입력해주세요.')
       return false
     }
@@ -244,7 +215,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
   const handleFormSubmit = async () => {
     const userData = {
       name: name,
-      university: school,
+      // university: '인하대학교',
       department: department,
       subscribe_notices: subscribeDepartments.filter(dept => dept !== ''),
       subscribe_saramin: fieldSelections.reduce((acc, selection) => {
@@ -256,15 +227,13 @@ const InfoModal: React.FC<InfoModalProps> = ({
         }
         return acc;
       }, {} as Record<string, string[]>),
-      // terms_of_service_agreement: terms.termsOfService,
       personal_information_collection_agreement: terms.privacyPolicy,
-      // promotion_and_information_receipt_agreement: terms.promotions,
     }
     console.log(fieldSelections);
     console.log(userData);
     try {
       await postUserData(userData)
-      setStorageData('is_new', 'false')
+      // setStorageData('is_new', 'false')
       toast.success('사용자 정보가 성공적으로 등록되었습니다.')
       onSubmit()
       onClose()
@@ -296,15 +265,11 @@ const InfoModal: React.FC<InfoModalProps> = ({
           <div className="Login-form-group">
             <label className="form-label">학교</label>
             <select
-              id="school"
               className="Login-form-input"
-              value={school}
-              onChange={e => setSchool(e.target.value)}
+              value="인하대학교"
+              disabled
             >
-              <option value="" disabled>학교를 선택하세요</option>
-              {schools.map((schoolName, index) => (
-                <option key={index} value={schoolName}>{schoolName}</option>
-              ))}
+              <option value="인하대학교">인하대학교</option>
             </select>
           </div>
           <div className="Login-form-group">
@@ -388,27 +353,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
       <div className="Login-Information">
         <div className="Login-terms">
           <div className="terms-form">
-            {/* <div className="term-item">
-              <input
-                type="checkbox"
-                checked={allChecked}
-                onChange={handleAllChange}
-                id="chk1"
-              />
-              <label htmlFor="chk1"></label>
-              <label htmlFor="chk1">선택 포함 전체 약관 동의</label>
-            </div> */}
-            {/* <div className="term-item">
-              <input
-                type="checkbox"
-                name="termsOfService"
-                checked={terms.termsOfService}
-                onChange={handleTermChange}
-                id="chk2"
-              />
-              <label htmlFor="chk2"></label>
-              <label htmlFor="chk2">이용약관 동의 (필수)</label>
-            </div> */}
             <div className="term-item">
               <input
                 type="checkbox"
@@ -421,17 +365,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
               <label htmlFor="chk3">개인정보 수집 및 이용동의 (필수)</label>
               <label className='checkPolicy' onClick={() => window.open('https://tikkeul-service.notion.site/aeaefffa24cd48eca005c0fb71b9358c?pvs=4', '_blank')}>약관 보기</label>
             </div>
-            {/* <div className="term-item">
-              <input
-                type="checkbox"
-                name="promotions"
-                checked={terms.promotions}
-                onChange={handleTermChange}
-                id="chk4"
-              />
-              <label htmlFor="chk4"></label>
-              <label htmlFor="chk4">프로모션 등 혜택/정보 수신 동의 (선택)</label>
-            </div> */}
           </div>
         </div>
       </div>

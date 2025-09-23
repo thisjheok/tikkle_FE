@@ -167,20 +167,19 @@ const Calendar: React.FC<{
           .map((_, index) => (
             <div key={`empty-${index}`} className="empty-day" />
           ))}
-        {days.map(day => {
+        {days.map((day, index) => {
           const isToday =
             day === new Date().getDate() &&
             currentDate.getMonth() === new Date().getMonth() &&
             currentDate.getFullYear() === new Date().getFullYear()
 
-          // const eventCount = events.filter(
-          //   event => new Date(event.start.dateTime).getDate() === day
-          // ).length
+          // 첫 줄에 있는 날짜인지 확인
+          const isFirstRow = index + firstDayOfMonth < 7
 
           return (
             <div
               key={day}
-              className={`day ${isToday ? 'today' : ''}`}
+              className={`day ${isToday ? 'today' : ''} ${isFirstRow ? 'first-row' : ''}`}
               onClick={() => handleDayClick(day)}
             >
               <div className="day-number">{day}</div>

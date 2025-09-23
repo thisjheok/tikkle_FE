@@ -8,10 +8,10 @@
   --button-border: none;
   --main-container-background: conic-gradient(
     from 107deg at 45.62% 65.84%,
-    #f9fbff 0deg,
-    #f6ceb3 114.66499328613281deg,
-    #dbecef 246.04843139648438deg,
-    #f3f4f4 360deg
+    #9FCDFF 0deg,
+    #B4D7FF 120deg,
+    #E7F2FF 240deg,
+    #F6FBFF 360deg
   );
   --Srollbar: #ffeee3;
 }

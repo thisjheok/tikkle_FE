@@ -1,0 +1,39 @@
+.tikkeul-notice-item{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    border-bottom: 1px solid #C6C7C9;
+    margin-bottom: 8px;
+}
+
+.tikkeul-notice-item-title{
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+}
+.tikkeul-notice-item-title-important{
+    font-size: 14px;
+    font-weight: 500;
+    color: #F00;
+}
+.tikkeul-notice-item-title-text{
+    font-size: 14px;
+    font-weight: 500;
+    color: #505050;
+}
+
+.tikkeul-notice-item-new{
+    display: flex;
+    font-size: 16px;
+    font-weight: 500;
+    color: #F00;
+}
+
+.tikkeul-notice-item-date{
+    display: flex;
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 3px;
+}

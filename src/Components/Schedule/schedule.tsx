@@ -1,3 +1,4 @@
+// 캘린더 하단 일정 정보 컴포넌트
 import React from 'react'
 import './schedule.css'
 

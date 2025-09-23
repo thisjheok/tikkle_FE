@@ -1,13 +1,13 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react'
-import Modal from '../modal/modal'
+import Modal from '../Modal/modal'
 import { motion } from 'framer-motion'
 import './Mypage.css'
-import History from './History/History'
-import Recruit from './Recruit/Recruit'
-import Activites from './Activites/Activites'
-import Contest from './Contest/Contest'
-import DoLogin from './DoLogin'
-import Loading from '../Loading'
+import History from './Components/History/History'
+import Recruit from './Components/Recruit/Recruit'
+import Activites from './Components/Activites/Activites'
+import Contest from './Components/Contest/Contest'
+import DoLogin from './Components/DoLogin/DoLogin'
+import Loading from '../Loading/Loading'
 import { getUserData, UserData } from '../../api'
 import * as Sentry from '@sentry/react';
 import { getStorageData, removeStorageData } from '../../util/storage'
@@ -33,7 +33,7 @@ const item = {
   visible: { y: 0, opacity: 1 },
 }
 
-const Myschool = lazy(() => import('./Myschool/Myschool'))
+const Myschool = lazy(() => import('./Components/Myschool/Myschool'))
 
 const selecterData = [
   {
@@ -68,8 +68,8 @@ const selecterData = [
   },
 ]
 
-const Mypageinfo = lazy(() => import('../modal/Mypageinfomodal'))
-const LoginModal2 = lazy(() => import('../modal/Loginmodal2'))
+const Mypageinfo = lazy(() => import('../Modal/MyPageInfoModal/Mypageinfomodal'))
+const LoginModal2 = lazy(() => import('../Modal/LoginModal/Loginmodal2'))
 
 const MyPageModal: React.FC<MyPageModalProps> = ({
   isOpen,

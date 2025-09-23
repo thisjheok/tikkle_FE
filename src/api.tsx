@@ -204,7 +204,6 @@ export const postgoogleAuth = (googleAuthData: GoogleAuthBody) => {
 
 export const postUserData = async (userData: {
   name: string
-  university: string
   department: string
   subscribe_notices: string[]
   // terms_of_service_agreement: boolean
@@ -221,7 +220,7 @@ export const postUserData = async (userData: {
 }
 export const refreshToken = async (refreshToken: string) => {
   const response = await axios.post(
-    'https://api.tikkeul.site/auth/refresh',
+    'https://pqarvqpw3r2kmkosaixg7bdoq40yzcrk.lambda-url.ap-northeast-3.on.aws/auth/refresh',
     {},
     {
       headers: {
@@ -571,7 +570,7 @@ export const getUserData = async (): Promise<UserData> => {
 }
 
 interface UpdateUniversityData {
-  university: string
+  // university: string
   department: string
   subscribe_notices: string[]
 }
